@@ -531,6 +531,7 @@ const tortaStyles = StyleSheet.create({
   },
 });
 
+
 const homeStyles = StyleSheet.create({
   row: {
     flexDirection: 'row',
@@ -632,4 +633,7 @@ const ventaStyles = StyleSheet.create({
 });
 
 export { ingredientStyles, tortaStyles, homeStyles, ventaStyles };
+
+
+
 export default styles;

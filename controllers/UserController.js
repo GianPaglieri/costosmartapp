@@ -28,7 +28,7 @@ export const sendAuthenticatedRequest = async (url, config = {}) => {
 export const UserController = {
   registerUser: async (userData) => {
     try {
-      const { data } = await axios.post(`${API_URL}/users`, userData);
+      const { data } = await axios.post(`${API_URL}/users/register`, userData);
       return data;
     } catch (error) {
       console.error('Error:', error);

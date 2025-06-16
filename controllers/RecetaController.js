@@ -1,21 +1,10 @@
 import { sendAuthenticatedRequest, UserController } from './UserController';
 import axios from 'axios';
-
-const API_URL = 'http://149.50.131.253/api';
-
-const waitUntilTokenIsAvailable = async () => {
-  while (!UserController.getToken()) {
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-  return UserController.getToken();
-};
+import { API_URL } from '../config';
 
 export const fetchRecetas = async () => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    const response = await sendAuthenticatedRequest(`${API_URL}/recetas`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
+    const response = await sendAuthenticatedRequest(`${API_URL}/recetas`);
 
     // Procesar la respuesta agrupada del backend
     return response.map(receta => ({
@@ -33,12 +22,12 @@ export const fetchRecetas = async () => {
 
 export const agregarReceta = async (recetaBase) => {
   try {
-    const token = await waitUntilTokenIsAvailable();
+    const token = await UserController.getToken();
     const response = await axios.post(`${API_URL}/tortas`, recetaBase, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
     return response.data;
   } catch (error) {
@@ -49,16 +38,12 @@ export const agregarReceta = async (recetaBase) => {
 
 export const agregarIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantidad) => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    console.log('Datos a enviar:', { ID_TORTA, ID_INGREDIENTE, cantidad });
-
+    const token = await UserController.getToken();
     const response = await axios.post(
       `${API_URL}/recetas/nueva-relacion`,
       { ID_TORTA, ID_INGREDIENTE, cantidad },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-
-    console.log('Respuesta completa del servidor:', response);
     
     // Adaptación para el formato de respuesta de tu backend
     if (response.data.message === 'Nueva relación agregada exitosamente') {
@@ -92,26 +77,13 @@ export const agregarIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantidad) => 
 
 export const editarCantidadIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantidad) => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    
-    console.log('[DEBUG] Enviando actualización de cantidad:', {
-      ID_TORTA,
-      ID_INGREDIENTE,
-      cantidad,
-      timestamp: new Date().toISOString()
-    });
+    const token = await UserController.getToken();
 
     const response = await axios.put(
       `${API_URL}/recetas/${ID_TORTA}/${ID_INGREDIENTE}`,
       { total_cantidad: cantidad },
-      { headers: { 'Authorization': `Bearer ${token}` } }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
-
-    console.log('[DEBUG] Respuesta del servidor:', {
-      status: response.status,
-      data: response.data,
-      timestamp: new Date().toISOString()
-    });
 
     return response.data.success
       ? { success: true, data: response.data }
@@ -133,7 +105,7 @@ export const editarCantidadIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantid
 
 export const eliminarIngrediente = async (ID_TORTA, ID_INGREDIENTE) => {
   try {
-    const token = await waitUntilTokenIsAvailable();
+    const token = await UserController.getToken();
     const response = await axios.delete(
       `${API_URL}/recetas/${ID_TORTA}/${ID_INGREDIENTE}`,
       { headers: { 'Authorization': `Bearer ${token}` } }
@@ -154,7 +126,7 @@ export const eliminarIngrediente = async (ID_TORTA, ID_INGREDIENTE) => {
 
 export const borrarReceta = async (ID_TORTA) => {
   try {
-    const token = await waitUntilTokenIsAvailable();
+    const token = await UserController.getToken();
     const response = await axios.delete(
       `${API_URL}/recetas/${ID_TORTA}`,
       { headers: { 'Authorization': `Bearer ${token}` } }
@@ -172,5 +144,3 @@ export const borrarReceta = async (ID_TORTA) => {
     };
   }
 };
-
-export { API_URL };

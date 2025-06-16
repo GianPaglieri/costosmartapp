@@ -1,18 +1,9 @@
+import axios from 'axios';
 import UserController, { sendAuthenticatedRequest } from './UserController';
-
-const API_URL = 'http://149.50.131.253/api';
-
-const waitUntilTokenIsAvailable = async () => {
-  while (!UserController.getToken()) {
-    console.log('Esperando a que se obtenga un token de autenticación...');
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-  return UserController.getToken();
-};
+import { API_URL } from '../config';
 
 export const fetchIngredientes = async () => {
   try {
-    const token = await waitUntilTokenIsAvailable();
     const data = await sendAuthenticatedRequest(`${API_URL}/ingredientes`);
     
     // Asegúrate de que data.ingredientes sea un array
@@ -30,7 +21,6 @@ export const fetchIngredientes = async () => {
 
 export const fetchIngredientesMenosStock = async () => {
   try {
-    const token = await waitUntilTokenIsAvailable();
     const data = await sendAuthenticatedRequest(`${API_URL}/ingredientes/menosstock`);
     return data;
   } catch (error) {
@@ -41,16 +31,17 @@ export const fetchIngredientesMenosStock = async () => {
 
 export const agregarIngrediente = async (ingrediente) => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    const response = await fetch(`${API_URL}/ingredientes`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(ingrediente),
-    });
-    const data = await response.json();
+    const token = await UserController.getToken();
+    const { data } = await axios.post(
+      `${API_URL}/ingredientes`,
+      ingrediente,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return data;
   } catch (error) {
     console.error('Error al agregar el ingrediente:', error);
@@ -60,16 +51,17 @@ export const agregarIngrediente = async (ingrediente) => {
 
 export const editarIngrediente = async (ingrediente) => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    const response = await fetch(`${API_URL}/ingredientes/${ingrediente.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(ingrediente),
-    });
-    const data = await response.json();
+    const token = await UserController.getToken();
+    const { data } = await axios.put(
+      `${API_URL}/ingredientes/${ingrediente.id}`,
+      ingrediente,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return data;
   } catch (error) {
     console.error('Error al editar el ingrediente:', error);
@@ -79,21 +71,17 @@ export const editarIngrediente = async (ingrediente) => {
 
 export const borrarIngrediente = async (id) => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    const response = await fetch(`${API_URL}/ingredientes/${id}`, {
-      method: 'DELETE',
+    const token = await UserController.getToken();
+    const { status, data } = await axios.delete(`${API_URL}/ingredientes/${id}`, {
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    if (response.ok) {
-      console.log('Ingrediente eliminado exitosamente');
+    if (status === 200) {
       return { success: true };
     } else {
-      const error = await response.json();
-      console.error('Error al eliminar el ingrediente:', error);
-      return { success: false, error };
+      return { success: false, error: data };
     }
   } catch (error) {
     console.error('Error en la solicitud de borrado del ingrediente:', error);

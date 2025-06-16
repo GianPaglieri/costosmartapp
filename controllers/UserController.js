@@ -1,20 +1,21 @@
 import axios from 'axios';
-const API_URL = 'http://149.50.131.253/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../config';
+
 let authToken = null;
 
-export const sendAuthenticatedRequest = async (url) => {
+export const sendAuthenticatedRequest = async (url, config = {}) => {
   try {
-    const token = authToken;
+    const token = await UserController.getToken();
     if (!token) {
       throw new Error('No se ha obtenido un token de autenticación');
     }
 
-    console.log('Token being sent:', token);
-
-    const response = await axios.get(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+    const response = await axios({
+      url,
+      headers: { 'Authorization': `Bearer ${token}` },
+      method: 'get',
+      ...config
     });
 
     return response.data;
@@ -27,17 +28,8 @@ export const sendAuthenticatedRequest = async (url) => {
 export const UserController = {
   registerUser: async (userData) => {
     try {
-      const response = await fetch(`${API_URL}/users`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-      if (!response.ok) {
-        throw new Error('Error al registrar usuario');
-      }
-      return await response.json();
+      const { data } = await axios.post(`${API_URL}/users`, userData);
+      return data;
     } catch (error) {
       console.error('Error:', error);
       throw error;
@@ -46,39 +38,28 @@ export const UserController = {
 
   loginUser: async (email, contrasena) => {
     try {
-      const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, contrasena }),
-      });
-
-      if (!response.ok) {
-        console.error(`Error logging in: ${response.status} ${response.statusText}`);
-        throw new Error(`Error al iniciar sesión: ${response.status} ${response.statusText}`);
-      }
-
-      const responseData = await response.json();
-      console.log('Login response:', responseData);
-      storeToken(responseData.token);
-      return responseData;
+      const { data } = await axios.post(`${API_URL}/login`, { email, contrasena });
+      await storeToken(data.token);
+      return data;
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
       throw error;
     }
   },
 
-  getToken: () => {
-    const token = authToken;
-    console.log('Token obtenido:', token);
-    return token;
+  getToken: async () => {
+    if (authToken) {
+      return authToken;
+    }
+    const storedToken = await AsyncStorage.getItem('authToken');
+    authToken = storedToken;
+    return storedToken;
   },
 };
 
-const storeToken = (token) => {
+const storeToken = async (token) => {
   authToken = token;
-  console.log('Token almacenado:', authToken);
+  await AsyncStorage.setItem('authToken', token);
 };
 
 export default UserController;

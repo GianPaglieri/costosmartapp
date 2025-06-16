@@ -55,7 +55,16 @@ const Navigation = () => {
         <Drawer.Screen name="Tortas" component={TortasScreen} />
         <Drawer.Screen name="Recetas" component={RecetaScreen} />
         <Drawer.Screen name="Ventas" component={VentaScreen} />
-        <Drawer.Screen name="Login" component={LoginScreen} options={{ drawerItemStyle: { height: 0 } }} />
+        <Drawer.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ drawerItemStyle: { height: 0 } }}
+        />
+        <Drawer.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{ drawerItemStyle: { height: 0 } }}
+        />
 
       </Drawer.Navigator>
     </NavigationContainer>

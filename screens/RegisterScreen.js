@@ -1,144 +1,97 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Modal, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
+import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import UserController from '../controllers/UserController';
+import styles from '../components/styles';
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ navigation }) => {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [contrasena, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [mensaje, setMensaje] = useState('');
-  const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal
-  const navigation = useNavigation();
 
   const handleRegister = async () => {
+    if (contrasena !== confirmPassword) {
+      Alert.alert('Error', 'Las contraseñas no coinciden');
+      return;
+    }
     try {
-      if (contrasena !== confirmPassword) {
-        setMensaje('Las contraseñas no coinciden');
-        return;
-      }
-
-      const userData = {
-        nombre: nombre,
-        email: email,
-        contrasena: contrasena,
-      };
-      const response = await UserController.registerUser(userData);
-     
-      
-      setShowModal(true); // Mostrar el modal después del registro exitoso
+      const userData = { nombre, email, contrasena };
+      await UserController.registerUser(userData);
+      Alert.alert('Usuario registrado', 'Tu cuenta se creó correctamente', [
+        { text: 'Ir a login', onPress: () => navigation.navigate('Login') },
+      ]);
     } catch (error) {
       console.error('Error al registrar usuario:', error.message);
-      setMensaje('Error al registrar usuario');
+      Alert.alert('Error', 'No se pudo registrar el usuario');
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    navigation.navigate('LoginScreen'); // Redirigir al usuario a la pantalla de inicio de sesión al cerrar el modal
-  };
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Registro</Text>
-      <Text style={styles.errorMessage}>{mensaje}</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre"
-        value={nombre}
-        onChangeText={setNombre}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        secureTextEntry
-        value={contrasena}
-        onChangeText={setPassword}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Confirmar contraseña"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
-      <Button title="Registrarse" onPress={handleRegister} />
-
-      {/* Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showModal}
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Usuario registrado correctamente</Text>
-            <TouchableOpacity onPress={closeModal}>
-              <Text style={styles.closeButton}>Cerrar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+    <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+      <View style={[styles.card, { width: '90%', maxWidth: 400, padding: 24 }]}>
+        <Text style={[styles.cardTitle, { fontSize: 24, textAlign: 'center', marginBottom: 16 }]}>Crear Cuenta</Text>
+        <Text style={[styles.label, { marginBottom: 4 }]}>Nombre</Text>
+        <TextInput
+          style={[styles.input, { marginBottom: 16 }]}
+          placeholder="Tu nombre"
+          value={nombre}
+          onChangeText={setNombre}
+        />
+        <Text style={[styles.label, { marginBottom: 4 }]}>Correo electrónico</Text>
+        <TextInput
+          style={[styles.input, { marginBottom: 16 }]}
+          placeholder="usuario@ejemplo.com"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <Text style={[styles.label, { marginBottom: 4 }]}>Contraseña</Text>
+        <TextInput
+          style={[styles.input, { marginBottom: 16 }]}
+          placeholder="••••••••"
+          secureTextEntry
+          value={contrasena}
+          onChangeText={setPassword}
+        />
+        <Text style={[styles.label, { marginBottom: 4 }]}>Confirmar contraseña</Text>
+        <TextInput
+          style={[styles.input, { marginBottom: 24 }]}
+          placeholder="••••••••"
+          secureTextEntry
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+        <Pressable
+          onPress={handleRegister}
+          style={({ pressed }) => [
+            styles.botonPrimario,
+            {
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              paddingVertical: 14,
+              borderRadius: 12,
+              elevation: 4,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              opacity: pressed ? 0.8 : 1,
+            },
+          ]}
+        >
+          <Ionicons name="person-add-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
+          <Text style={styles.botonTexto}>Registrarse</Text>
+        </Pressable>
+        <Pressable onPress={() => navigation.navigate('Login')} style={{ marginTop: 16, alignSelf: 'center' }}>
+          <Text style={styles.seccionLink}>¿Ya tienes una cuenta? Inicia sesión</Text>
+        </Pressable>
+      </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    backgroundColor: '#ffffff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  input: {
-    width: '100%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 15,
-  },
-  errorMessage: {
-    color: 'red',
-    marginBottom: 10,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalView: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    elevation: 5,
-  },
-  modalText: {
-    fontSize: 18,
-    marginBottom: 20,
-  },
-  closeButton: {
-    fontSize: 16,
-    color: '#007bff',
-  },
-});
 
 export default RegisterScreen;

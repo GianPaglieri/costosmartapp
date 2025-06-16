@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export default StyleSheet.create({
+const styles = StyleSheet.create({
   // Contenedor general
   container: {
     flex: 1,
@@ -361,4 +361,175 @@ export default StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  editButton: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
 });
+
+const ingredientStyles = StyleSheet.create({
+  dialog: {
+    marginHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+  modalHeaderMargin: {
+    marginBottom: 12,
+  },
+  modalActionsBetween: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+  },
+  modalActionsEnd: {
+    justifyContent: 'flex-end',
+    paddingHorizontal: 8,
+  },
+  rowCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  cardRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cardInfo: {
+    flex: 1,
+    marginRight: 12,
+  },
+  ingredientName: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  ingredientUnit: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 4,
+  },
+  ingredientPrice: {
+    fontSize: 14,
+    color: '#555',
+  },
+  saveButton: {
+    marginLeft: 8,
+    backgroundColor: '#007bff',
+  },
+  deleteLabel: {
+    color: '#dc3545',
+    marginLeft: 4,
+  },
+  mb12: {
+    marginBottom: 12,
+  },
+  mb16: {
+    marginBottom: 16,
+  },
+  mb4: {
+    marginBottom: 4,
+  },
+  cardPadding: {
+    padding: 16,
+  },
+  separator: {
+    height: 12,
+  },
+  labelGray: {
+    color: '#666',
+  },
+});
+
+const tortaStyles = StyleSheet.create({
+  dialog: {
+    marginHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+  modalHeaderMargin: {
+    marginBottom: 12,
+  },
+  mb12: {
+    marginBottom: 12,
+  },
+  imageContainer: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    padding: 12,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  previewImage: {
+    width: '100%',
+    height: 140,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  imageActions: {
+    flexDirection: 'row',
+    width: '60%',
+    justifyContent: 'space-between',
+  },
+  actionButton: {
+    alignItems: 'center',
+  },
+  actionTextBlue: {
+    color: '#007bff',
+    fontSize: 12,
+  },
+  actionTextDelete: {
+    color: '#dc3545',
+    fontSize: 12,
+  },
+  uploadText: {
+    color: '#007bff',
+    marginTop: 4,
+  },
+  modalActionsBetween: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+  },
+  rowCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  deleteLabel: {
+    color: '#dc3545',
+    marginLeft: 4,
+  },
+  viewRecipeButton: {
+    marginRight: 8,
+    backgroundColor: '#6c757d',
+  },
+  primaryButton: {
+    backgroundColor: '#007bff',
+  },
+  cardMargin: {
+    marginBottom: 10,
+  },
+  cardRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  flex1: {
+    flex: 1,
+  },
+  fieldLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 6,
+  },
+  whiteText: {
+    color: '#fff',
+  },
+});
+
+export { ingredientStyles, tortaStyles };
+export default styles;

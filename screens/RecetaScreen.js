@@ -16,7 +16,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../components/styles';
-import { API_URL } from '../controllers/RecetaController';
+import { API_URL } from '../config';
 import {
   fetchRecetas,
   borrarReceta,

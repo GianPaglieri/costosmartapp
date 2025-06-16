@@ -1,22 +1,12 @@
 import axios from 'axios';
 import UserController, { sendAuthenticatedRequest } from './UserController';
-
-const baseUrl = 'http://149.50.131.253/api';
-
-const waitUntilTokenIsAvailable = async () => {
-  while (!UserController.getToken()) {
-    console.log('Esperando a que se obtenga un token de autenticación...');
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-  return UserController.getToken();
-};
+import { API_URL } from '../config';
 
 // Controlador de ventas
 export const Ventas = async () => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    const ventas = await sendAuthenticatedRequest(`${baseUrl}/ventas`);
-    const tortas = await sendAuthenticatedRequest(`${baseUrl}/tortas`);
+    const ventas = await sendAuthenticatedRequest(`${API_URL}/ventas`);
+    const tortas = await sendAuthenticatedRequest(`${API_URL}/tortas`);
 
     if (!ventas || !tortas) {
       throw new Error('Error al obtener las listas de ventas o tortas');
@@ -38,10 +28,8 @@ export const Ventas = async () => {
 };
 export const obtenerVentas = async () => {
   try {
-      const token = await waitUntilTokenIsAvailable();
-     
-      const ventas = await sendAuthenticatedRequest(`${baseUrl}/ventas`);
-     
+      const ventas = await sendAuthenticatedRequest(`${API_URL}/ventas`);
+
       return ventas;
   } catch (error) {
       console.error('Error al obtener las ventas:', error.message);
@@ -51,11 +39,11 @@ export const obtenerVentas = async () => {
 
 export const registrarVenta = async (idTorta) => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    const response = await axios.post(`${baseUrl}/ventas`, { id_torta: idTorta }, {
+    const token = await UserController.getToken();
+    const response = await axios.post(`${API_URL}/ventas`, { id_torta: idTorta }, {
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.data;
   } catch (error) {
@@ -64,10 +52,9 @@ export const registrarVenta = async (idTorta) => {
   }
 };
 
-  export const obtenerCantidadVentas = async () => {
+export const obtenerCantidadVentas = async () => {
     try {
-      const token = await waitUntilTokenIsAvailable();
-      const response = await sendAuthenticatedRequest(`${baseUrl}/ventas/cantidad`);
+      const response = await sendAuthenticatedRequest(`${API_URL}/ventas/cantidad`);
       const cantidadVentas = response?.cantidadVentas;
 
       if (cantidadVentas === undefined) {
@@ -83,10 +70,8 @@ export const registrarVenta = async (idTorta) => {
 
 export const obtenerGanancias = async () => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    const response = await sendAuthenticatedRequest(`${baseUrl}/ventas/ganancias`);
+    const response = await sendAuthenticatedRequest(`${API_URL}/ventas/ganancias`);
     const ganancias = response?.ganancias;
-    console.log('Ganancias obtenidas:', ganancias); // Verifica el valor de ganancias
     if (ganancias === undefined) {
       throw new Error('La propiedad "ganancias" no está definida en la respuesta');
     }
@@ -100,8 +85,7 @@ export const obtenerGanancias = async () => {
 
 export const obtenerCantidadVentasSemanales = async () => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    const response = await sendAuthenticatedRequest(`${baseUrl}/ventas/cantidad-semana`);
+    const response = await sendAuthenticatedRequest(`${API_URL}/ventas/cantidad-semana`);
     const cantidadVentasSemana = response?.cantidadVentasSemana;
 
     if (cantidadVentasSemana === undefined) {
@@ -117,8 +101,7 @@ export const obtenerCantidadVentasSemanales = async () => {
 
 export const obtenerPorcentajeVentas = async () => {
   try {
-    const token = await waitUntilTokenIsAvailable();
-    const response = await sendAuthenticatedRequest(`${baseUrl}/ventas/porcentaje-ventas`);
+    const response = await sendAuthenticatedRequest(`${API_URL}/ventas/porcentaje-ventas`);
     const porcentajeVentas = response?.porcentajeCambio;
 
     if (porcentajeVentas === undefined) {

@@ -4,7 +4,6 @@ import {
   View,
   Text,
   FlatList,
-  StyleSheet,
   ActivityIndicator,
   Alert,
   TouchableOpacity,
@@ -12,7 +11,7 @@ import {
 } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Card, Divider } from 'react-native-paper';
-import styles from '../components/styles';
+import styles, { ventaStyles } from '../components/styles';
 import { obtenerVentas } from '../controllers/VentaController';
 
 export default function SalesByCakeScreen() {
@@ -61,37 +60,37 @@ export default function SalesByCakeScreen() {
   const renderItem = ({ item }) => {
     const isOpen = expanded === item.name;
     return (
-      <Card style={local.card}>
+      <Card style={ventaStyles.card}>
         <TouchableOpacity activeOpacity={0.7} onPress={() => toggle(item.name)}>
-          <View style={local.headerRow}>
-            <View style={local.badgeCount}>
-              <Text style={local.badgeText}>{item.count}</Text>
+          <View style={ventaStyles.headerRow}>
+            <View style={ventaStyles.badgeCount}>
+              <Text style={ventaStyles.badgeText}>{item.count}</Text>
             </View>
-            <View style={local.info}>
-              <Text style={local.name} numberOfLines={1} ellipsizeMode="tail">
+            <View style={ventaStyles.info}>
+              <Text style={ventaStyles.name} numberOfLines={1} ellipsizeMode="tail">
                 {item.name}
               </Text>
-              <Text style={local.subtitle}>
-                Ingresos: <Text style={local.sum}>${item.sum}</Text>
+              <Text style={ventaStyles.subtitle}>
+                Ingresos: <Text style={ventaStyles.sum}>${item.sum}</Text>
               </Text>
             </View>
           </View>
         </TouchableOpacity>
 
         {isOpen && (
-          <View style={local.detailContainer}>
+          <View style={ventaStyles.detailContainer}>
             <ScrollView
-              style={local.detailScroll}
+              style={ventaStyles.detailScroll}
               showsVerticalScrollIndicator
               nestedScrollEnabled
             >
               {item.items.map((v, idx) => (
                 <View key={idx}>
-                  <View style={local.detailRow}>
-                    <Text style={local.detailDate} numberOfLines={1} ellipsizeMode="tail">
+                  <View style={ventaStyles.detailRow}>
+                    <Text style={ventaStyles.detailDate} numberOfLines={1} ellipsizeMode="tail">
                       {new Date(v.fecha_venta).toLocaleDateString()}
                     </Text>
-                    <Text style={local.detailPrice}>
+                    <Text style={ventaStyles.detailPrice}>
                       ${parseFloat(v.precio_torta).toFixed(2)}
                     </Text>
                   </View>
@@ -122,71 +121,3 @@ export default function SalesByCakeScreen() {
   );
 }
 
-const local = StyleSheet.create({
-  card: {
-    marginHorizontal: 16,
-    marginVertical: 8,
-    borderRadius: 12,
-    elevation: 2,
-    backgroundColor: '#fff',
-    overflow: 'hidden',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  badgeCount: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#007bff10',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  badgeText: {
-    color: '#007bff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  info: {
-    flex: 1,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-  },
-  sum: {
-    color: '#28a745',
-    fontWeight: '700',
-  },
-  detailContainer: {
-    maxHeight: 200,
-    borderTopWidth: 1,
-    borderColor: '#eee',
-  },
-  detailScroll: {
-    paddingHorizontal: 16,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 6,
-  },
-  detailDate: {
-    fontSize: 12,
-    color: '#555',
-  },
-  detailPrice: {
-    fontSize: 12,
-    color: '#28a745',
-    fontWeight: '500',
-  },
-});

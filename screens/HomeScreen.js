@@ -8,12 +8,11 @@ import {
   Modal,
   Pressable,
   Alert,
-  FlatList,
-  StyleSheet
+  FlatList
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useFocusEffect } from '@react-navigation/native';
-import styles from '../components/styles';
+import styles, { homeStyles } from '../components/styles';
 import {
   obtenerCantidadVentas,
   obtenerGanancias,
@@ -192,14 +191,14 @@ export default function HomeScreen({ navigation }) {
           </View>
           {top3.length > 0 ? (
             top3.map((t, i) => (
-              <View key={i} style={localStyles.row}>
-                <View style={localStyles.circle}>
-                  <Text style={localStyles.circleText}>{i + 1}</Text>
+              <View key={i} style={homeStyles.row}>
+                <View style={homeStyles.circle}>
+                  <Text style={homeStyles.circleText}>{i + 1}</Text>
                 </View>
-                <Text style={localStyles.name} numberOfLines={1} ellipsizeMode="tail">
+                <Text style={homeStyles.name} numberOfLines={1} ellipsizeMode="tail">
                   {t.name}
                 </Text>
-                <Text style={localStyles.info}>
+                <Text style={homeStyles.info}>
                   {t.count} ventas ({t.percent}%)
                 </Text>
               </View>
@@ -262,33 +261,3 @@ export default function HomeScreen({ navigation }) {
   );
 }
 
-const localStyles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8
-  },
-  circle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#ccc',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 8
-  },
-  circleText: {
-    color: '#fff',
-    fontWeight: 'bold'
-  },
-  name: {
-    flex: 1,
-    fontSize: 14,
-    color: '#333'
-  },
-  info: {
-    fontSize: 12,
-    color: '#007bff',
-    marginLeft: 8
-  }
-});

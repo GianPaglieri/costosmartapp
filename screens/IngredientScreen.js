@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Card, Portal, Dialog, TextInput, Button } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import styles from '../components/styles';
+import styles, { ingredientStyles as ingStyles } from '../components/styles';
 import {
   fetchIngredientes,
   agregarIngrediente,
@@ -18,7 +18,7 @@ import {
 } from '../controllers/IngredientController';
 
 const FieldLabel = ({ children }) => (
-  <Text style={[styles.inputLabel, { marginBottom: 4 }]}>{children}</Text>
+  <Text style={[styles.inputLabel, ingStyles.mb4]}>{children}</Text>
 );
 
 const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSave, onDelete }) => {
@@ -53,9 +53,9 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
       <Dialog
         visible={visible}
         onDismiss={onDismiss}
-        style={{ marginHorizontal: 16, borderRadius: 8, backgroundColor: '#fff' }}
+        style={ingStyles.dialog}
       >
-        <View style={[styles.modalHeader, { marginBottom: 12 }]}>
+        <View style={[styles.modalHeader, ingStyles.modalHeaderMargin]}>
           <Text style={styles.modalTitle}>Editar Ingrediente</Text>
           <Pressable onPress={onDismiss} hitSlop={10}>
             <Ionicons name="close-circle" size={24} color="#666" />
@@ -68,7 +68,7 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
             placeholder="Ej. Harina"
             value={local.nombre}
             onChangeText={t => handleChange('nombre', t)}
-            style={[styles.input, { marginBottom: 12 }]}
+            style={[styles.input, ingStyles.mb12]}
           />
 
           <FieldLabel>Unidad de medida</FieldLabel>
@@ -77,7 +77,7 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
             placeholder="Ej. Gramos"
             value={local.unidad_Medida}
             onChangeText={t => handleChange('unidad_Medida', t)}
-            style={[styles.input, { marginBottom: 12 }]}
+            style={[styles.input, ingStyles.mb12]}
           />
 
           <FieldLabel>Tamaño paquete</FieldLabel>
@@ -87,7 +87,7 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
             keyboardType="numeric"
             value={local.tamano_Paquete}
             onChangeText={t => handleChange('tamano_Paquete', t)}
-            style={[styles.input, { marginBottom: 12 }]}
+            style={[styles.input, ingStyles.mb12]}
           />
 
           <FieldLabel>Precio / paquete</FieldLabel>
@@ -97,7 +97,7 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
             keyboardType="numeric"
             value={local.costo}
             onChangeText={t => handleChange('costo', t)}
-            style={[styles.input, { marginBottom: 12 }]}
+            style={[styles.input, ingStyles.mb12]}
           />
 
           <FieldLabel>Stock disponible</FieldLabel>
@@ -107,20 +107,20 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
             keyboardType="numeric"
             value={local.CantidadStock}
             onChangeText={t => handleChange('CantidadStock', t)}
-            style={[styles.input, { marginBottom: 16 }]}
+            style={[styles.input, ingStyles.mb16]}
           />
         </Dialog.Content>
 
-        <Dialog.Actions style={{ justifyContent: 'space-between', paddingHorizontal: 8 }}>
+        <Dialog.Actions style={ingStyles.modalActionsBetween}>
           {/* Botón Eliminar */}
-          <TouchableOpacity onPress={() => onDelete(local.id)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => onDelete(local.id)} style={ingStyles.rowCenter}>
             <Ionicons name="trash-outline" size={20} color="#dc3545" />
-            <Text style={{ color: '#dc3545', marginLeft: 4 }}>Eliminar</Text>
+            <Text style={ingStyles.deleteLabel}>Eliminar</Text>
           </TouchableOpacity>
 
           {/* Cancelar / Guardar */}
-          <View style={{ flexDirection: 'row' }}>
-            <Button mode="text" onPress={onDismiss} labelStyle={{ color: '#666' }}>
+          <View style={ingStyles.row}>
+            <Button mode="text" onPress={onDismiss} labelStyle={ingStyles.labelGray}>
               Cancelar
             </Button>
             <Button
@@ -133,7 +133,7 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
                 costo: parseFloat(local.costo),
                 CantidadStock: parseInt(local.CantidadStock, 10),
               })}
-              style={{ marginLeft: 8, backgroundColor: '#007bff' }}
+              style={ingStyles.saveButton}
             >
               Guardar
             </Button>
@@ -168,9 +168,9 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave }) => {
       <Dialog
         visible={visible}
         onDismiss={onDismiss}
-        style={{ marginHorizontal: 16, borderRadius: 8, backgroundColor: '#fff' }}
+        style={ingStyles.dialog}
       >
-        <View style={[styles.modalHeader, { marginBottom: 12 }]}>
+        <View style={[styles.modalHeader, ingStyles.modalHeaderMargin]}>
           <Text style={styles.modalTitle}>Agregar Ingrediente</Text>
           <Pressable onPress={onDismiss} hitSlop={10}>
             <Ionicons name="close-circle" size={24} color="#666" />
@@ -183,7 +183,7 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave }) => {
             placeholder="Ej. Azúcar"
             value={local.nombre}
             onChangeText={t => handleChange('nombre', t)}
-            style={[styles.input, { marginBottom: 12 }]}
+            style={[styles.input, ingStyles.mb12]}
           />
 
           <FieldLabel>Unidad de medida</FieldLabel>
@@ -192,7 +192,7 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave }) => {
             placeholder="Ej. Kilos"
             value={local.unidad_Medida}
             onChangeText={t => handleChange('unidad_Medida', t)}
-            style={[styles.input, { marginBottom: 12 }]}
+            style={[styles.input, ingStyles.mb12]}
           />
 
           <FieldLabel>Tamaño paquete</FieldLabel>
@@ -202,7 +202,7 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave }) => {
             keyboardType="numeric"
             value={local.tamano_Paquete}
             onChangeText={t => handleChange('tamano_Paquete', t)}
-            style={[styles.input, { marginBottom: 12 }]}
+            style={[styles.input, ingStyles.mb12]}
           />
 
           <FieldLabel>Precio / paquete</FieldLabel>
@@ -212,7 +212,7 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave }) => {
             keyboardType="numeric"
             value={local.costo}
             onChangeText={t => handleChange('costo', t)}
-            style={[styles.input, { marginBottom: 12 }]}
+            style={[styles.input, ingStyles.mb12]}
           />
 
           <FieldLabel>Stock disponible</FieldLabel>
@@ -222,12 +222,12 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave }) => {
             keyboardType="numeric"
             value={local.CantidadStock}
             onChangeText={t => handleChange('CantidadStock', t)}
-            style={[styles.input, { marginBottom: 16 }]}
+            style={[styles.input, ingStyles.mb16]}
           />
         </Dialog.Content>
 
-        <Dialog.Actions style={{ justifyContent: 'flex-end', paddingHorizontal: 8 }}>
-          <Button mode="text" onPress={onDismiss} labelStyle={{ color: '#666' }}>
+        <Dialog.Actions style={ingStyles.modalActionsEnd}>
+          <Button mode="text" onPress={onDismiss} labelStyle={ingStyles.labelGray}>
             Cancelar
           </Button>
           <Button
@@ -239,7 +239,7 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave }) => {
               costo: parseFloat(local.costo),
               CantidadStock: parseInt(local.CantidadStock, 10),
             })}
-            style={{ marginLeft: 8, backgroundColor: '#007bff' }}
+            style={ingStyles.saveButton}
           >
             Guardar
           </Button>
@@ -299,11 +299,11 @@ export default function IngredientScreen() {
         onChangeText={setSearch}
         mode="outlined"
         left={<TextInput.Icon name="magnify" />}
-        style={[styles.searchInput, { marginBottom: 16 }]}
+        style={[styles.searchInput, ingStyles.mb16]}
       />
 
  <TouchableOpacity
-        style={[styles.botonAgregarIngrediente, { marginBottom: 12 }]}
+        style={[styles.botonAgregarIngrediente, ingStyles.mb12]}
         onPress={() => setAddVisible(true)}
       >
        
@@ -313,21 +313,21 @@ export default function IngredientScreen() {
   data={filtered}
   keyExtractor={i => i.id.toString()}
   renderItem={({ item }) => (
-    <Card style={[styles.card, { padding: 16 }]}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Card style={[styles.card, ingStyles.cardPadding]}>
+      <View style={ingStyles.cardRow}>
         {/* Datos */}
-        <View style={{ flex: 1, marginRight: 12 }}>
+        <View style={ingStyles.cardInfo}>
           {/* Nombre */}
-          <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>
+          <Text style={ingStyles.ingredientName}>
             {item.nombre}
           </Text>
           {/* Unidad + Tamaño */}
-          <Text style={{ fontSize: 14, color: '#555', marginBottom: 4 }}>
+          <Text style={ingStyles.ingredientUnit}>
             <Ionicons name="cube-outline" size={14} color="#555" />{' '}
             {item.tamano_Paquete} {item.unidad_Medida}
           </Text>
           {/* Precio + Stock */}
-          <Text style={{ fontSize: 14, color: '#555' }}>
+          <Text style={ingStyles.ingredientPrice}>
             <Ionicons name="pricetag-outline" size={14} color="#555" />{' '}
             ${parseFloat(item.costo).toFixed(2)}{'   '}
             <Ionicons name="layers-outline" size={14} color="#555" />{' '}
@@ -344,7 +344,7 @@ export default function IngredientScreen() {
       </View>
     </Card>
   )}
-  ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+  ItemSeparatorComponent={() => <View style={ingStyles.separator} />}
   contentContainerStyle={{ paddingBottom: 32 }}
 />
 

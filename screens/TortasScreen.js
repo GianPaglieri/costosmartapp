@@ -6,7 +6,7 @@ import { Card, Portal, Dialog, TextInput, Button } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import styles from '../components/styles';
+import styles, { tortaStyles as tStyles } from '../components/styles';
 import {
   fetchTortas,
   agregarTorta,
@@ -18,14 +18,7 @@ const BASE_URL = 'http://149.50.131.253/api';
 const PRIMARY_BLUE = '#007bff';
 
 const FieldLabel = ({ children }) => (
-  <Text style={[styles.inputLabel, {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 6
-  }]}>
-    {children}
-  </Text>
+  <Text style={[styles.inputLabel, tStyles.fieldLabel]}>{children}</Text>
 );
 
 const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete }) => {
@@ -71,9 +64,9 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
       <Dialog
         visible={visible}
         onDismiss={onDismiss}
-        style={{ marginHorizontal: 16, borderRadius: 8, backgroundColor: '#fff' }}
+        style={tStyles.dialog}
       >
-        <View style={[styles.modalHeader, { marginBottom: 12 }]}>
+        <View style={[styles.modalHeader, tStyles.modalHeaderMargin]}>
           <Text style={styles.modalTitle}>Editar Torta</Text>
           <Pressable onPress={onDismiss} hitSlop={10}>
             <Ionicons name="close-circle" size={24} color="#666" />
@@ -87,7 +80,7 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
             placeholder="Ej. Torta de chocolate"
             value={local.nombre_torta}
             onChangeText={t => handleChange('nombre_torta', t)}
-            style={[styles.input, { marginBottom: 12, backgroundColor: '#fff' }]}
+            style={[styles.input, tStyles.mb12, { backgroundColor: '#fff' }]}
           />
           <FieldLabel>Descripción</FieldLabel>
           <TextInput
@@ -96,55 +89,49 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
             multiline
             value={local.descripcion_torta}
             onChangeText={t => handleChange('descripcion_torta', t)}
-            style={[styles.input, { marginBottom: 12, minHeight: 80, backgroundColor: '#fff' }]}
+            style={[styles.input, { minHeight: 80, backgroundColor: '#fff' }, tStyles.mb12]}
           />
           <FieldLabel>Imagen</FieldLabel>
-          <View style={{
-            backgroundColor: '#f9f9f9',
-            borderRadius: 8,
-            padding: 12,
-            alignItems: 'center',
-            marginBottom: 16
-          }}>
+          <View style={tStyles.imageContainer}>
             {local.imagen ? (
               <>
                 <Image
                   source={{ uri: local.imagen }}
-                  style={{ width: '100%', height: 140, borderRadius: 8, marginBottom: 8 }}
+                  style={tStyles.previewImage}
                 />
-                <View style={{ flexDirection: 'row', width: '60%', justifyContent: 'space-between' }}>
-                  <TouchableOpacity onPress={pickImage} style={{ alignItems: 'center' }}>
+                <View style={tStyles.imageActions}>
+                  <TouchableOpacity onPress={pickImage} style={tStyles.actionButton}>
                     <Ionicons name="image-outline" size={24} color={PRIMARY_BLUE} />
-                    <Text style={{ color: PRIMARY_BLUE, fontSize: 12 }}>Cambiar</Text>
+                    <Text style={tStyles.actionTextBlue}>Cambiar</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={removeImage} style={{ alignItems: 'center' }}>
+                  <TouchableOpacity onPress={removeImage} style={tStyles.actionButton}>
                     <Ionicons name="trash-outline" size={24} color="#dc3545" />
-                    <Text style={{ color: '#dc3545', fontSize: 12 }}>Eliminar</Text>
+                    <Text style={tStyles.actionTextDelete}>Eliminar</Text>
                   </TouchableOpacity>
                 </View>
               </>
             ) : (
-              <TouchableOpacity onPress={pickImage} style={{ alignItems: 'center' }}>
+              <TouchableOpacity onPress={pickImage} style={tStyles.actionButton}>
                 <Ionicons name="image-outline" size={32} color={PRIMARY_BLUE} />
-                <Text style={{ color: PRIMARY_BLUE, marginTop: 4 }}>Subir imagen</Text>
+                <Text style={tStyles.uploadText}>Subir imagen</Text>
               </TouchableOpacity>
             )}
           </View>
         </Dialog.Content>
 
-        <Dialog.Actions style={{ justifyContent: 'space-between', paddingHorizontal: 8 }}>
-          <TouchableOpacity onPress={() => onDelete(local.ID_TORTA)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Dialog.Actions style={tStyles.modalActionsBetween}>
+          <TouchableOpacity onPress={() => onDelete(local.ID_TORTA)} style={tStyles.rowCenter}>
             <Ionicons name="trash-outline" size={20} color="#dc3545" />
-            <Text style={{ color: '#dc3545', marginLeft: 4 }}>Eliminar</Text>
+            <Text style={tStyles.deleteLabel}>Eliminar</Text>
           </TouchableOpacity>
-          <View style={{ flexDirection: 'row' }}>
-            <Button onPress={handleVerReceta} style={{ marginRight: 8, backgroundColor: '#6c757d' }}>
-              <Text style={{ color: '#fff' }}>Ver Receta</Text>
+          <View style={tStyles.row}>
+            <Button onPress={handleVerReceta} style={tStyles.viewRecipeButton}>
+              <Text style={tStyles.whiteText}>Ver Receta</Text>
             </Button>
             <Button
               mode="contained"
               onPress={() => onSave(local)}
-              style={{ backgroundColor: PRIMARY_BLUE }}
+              style={tStyles.primaryButton}
               labelStyle={{ color: '#fff' }}
             >
               Guardar
@@ -228,10 +215,10 @@ export default function TortaScreen() {
         value={search}
         onChangeText={setSearch}
         mode="outlined"
-        style={[styles.searchInput, { marginBottom: 12 }]}
+        style={[styles.searchInput, tStyles.mb12]}
       />
       <TouchableOpacity
-        style={[styles.botonAgregarIngrediente, { marginBottom: 12 }]}
+        style={[styles.botonAgregarIngrediente, tStyles.mb12]}
         onPress={() => setAddVisible(true)}
       >
         <Text style={styles.botonAgregarTexto}>Agregar Torta</Text>
@@ -242,10 +229,10 @@ export default function TortaScreen() {
         keyExtractor={item => item.ID_TORTA.toString()}
         contentContainerStyle={{ paddingBottom: 24 }}
         renderItem={({ item }) => (
-          <Card style={[styles.card, { marginBottom: 10 }]}>
+          <Card style={[styles.card, tStyles.cardMargin]}>
             <Card.Content>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <View style={{ flex: 1 }}>
+              <View style={tStyles.cardRow}>
+                <View style={tStyles.flex1}>
                   <Text style={styles.cardTitle}>{item.nombre_torta}</Text>
                   <Text style={styles.cardText}>{item.descripcion_torta}</Text>
                 </View>

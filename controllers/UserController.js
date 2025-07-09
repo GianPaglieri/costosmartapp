@@ -43,6 +43,10 @@ export const UserController = {
       return data;
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
+      const mensajeBackend = error.response?.data?.error || error.response?.data?.message;
+      if (mensajeBackend) {
+        throw new Error(mensajeBackend);
+      }
       throw error;
     }
   },

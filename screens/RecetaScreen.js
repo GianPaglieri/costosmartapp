@@ -97,9 +97,9 @@ const handleVerTorta = () => {
     return precioEncontrado ? `$${precioEncontrado.costo_total}` : 'Precio no disponible';
   };
 
-  const ingredientesDisponibles = ingredientes.filter(
-    ing => !formData.ingredientes.some(i => i.ID_INGREDIENTE === ing.id)
-  );
+  const ingredientesDisponibles = ingredientes
+    .filter(ing => !formData.ingredientes.some(i => i.ID_INGREDIENTE === ing.id))
+    .sort((a, b) => a.nombre.localeCompare(b.nombre));
 
   const handleSaveReceta = async () => {
     if (!formData.nombre_torta.trim() && !formData.ID_TORTA) {

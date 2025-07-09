@@ -1,5 +1,5 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 import { API_URL } from '../config';
 
 let authToken = null;
@@ -52,7 +52,7 @@ export const UserController = {
     if (authToken) {
       return authToken;
     }
-    const storedToken = await AsyncStorage.getItem('authToken');
+    const storedToken = await SecureStore.getItemAsync('authToken');
     authToken = storedToken;
     return storedToken;
   },
@@ -60,7 +60,7 @@ export const UserController = {
 
 const storeToken = async (token) => {
   authToken = token;
-  await AsyncStorage.setItem('authToken', token);
+  await SecureStore.setItemAsync('authToken', token);
 };
 
 export default UserController;

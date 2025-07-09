@@ -1,4 +1,9 @@
 {
+  "expo": {
+    "extra": {
+      "API_URL": "https://your-backend-url/api"
+    }
+  },
   "android": {
     "package": "com.anonymous.app"
   }

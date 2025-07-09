@@ -18,22 +18,19 @@ import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../components/styles';
 import { API_URL } from '../config';
+import AddIngredienteModal from '../components/AddIngredienteModal';
+import IngredienteItem from '../components/IngredienteItem';
+import useRecetas from '../hooks/useRecetas';
 import {
-  fetchRecetas,
   borrarReceta,
   agregarReceta,
   editarCantidadIngrediente,
   eliminarIngrediente,
   agregarIngrediente
 } from '../controllers/RecetaController';
-import { fetchIngredientes } from '../controllers/IngredientController';
-import { fetchListaPrecios } from '../controllers/ListaPreciosController';
 
 const RecetasScreen = ({ navigation }) => {
    const route = useRoute();
-  const [recetas, setRecetas] = useState([]);
-  const [ingredientes, setIngredientes] = useState([]);
-  const [precios, setPrecios] = useState([]); // Estado para almacenar los precios
   const [modalVisible, setModalVisible] = useState(false);
   const [ingredienteModalVisible, setIngredienteModalVisible] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,52 +41,35 @@ const RecetasScreen = ({ navigation }) => {
     ingredientes: [],
     ingredientesOriginales: []
   });
-  const [nuevoIngrediente, setNuevoIngrediente] = useState(null);
-  const [cantidadNuevo, setCantidadNuevo] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Usamos el 75% de la pantalla para el modal
   const modalMaxHeight = Dimensions.get('window').height * 0.75;
-  const footerHeight = 60;
-  const scrollAreaHeight = modalMaxHeight - footerHeight;
+
+  const { recetas, ingredientes, precios, cargarDatos } = useRecetas();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', cargarDatos);
     return unsubscribe;
   }, [navigation]);
   // ---> Si venís desde TortaScreen con recetaTortaId, abrí el modal
-useEffect(() => {
-  if (route.params?.recetaTortaId && recetas.length > 0) {
-    const receta = recetas.find(r => r.ID_TORTA === route.params.recetaTortaId);
-    if (receta) {
-      openEditModal(receta);
-      navigation.setParams({ recetaTortaId: null }); // 🔧 <-- reset del parámetro
+  useEffect(() => {
+    if (route.params?.recetaTortaId && recetas.length > 0) {
+      const receta = recetas.find(r => r.ID_TORTA === route.params.recetaTortaId);
+      if (receta) {
+        openEditModal(receta);
+        navigation.setParams({ recetaTortaId: null }); // 🔧 <-- reset del parámetro
+      }
     }
-  }
-}, [route.params, recetas]);
+  }, [route.params, recetas]);
 
 
-  // Se cargan recetas, ingredientes y lista de precios al mismo tiempo
-  const cargarDatos = async () => {
-    try {
-      const [recetasData, ingredientesData, preciosData] = await Promise.all([
-        fetchRecetas(),
-        fetchIngredientes(),
-        fetchListaPrecios()
-      ]);
-      setRecetas(recetasData);
-      setIngredientes(ingredientesData);
-      setPrecios(preciosData);
-    } catch (error) {
-      Alert.alert('Error', 'No se pudieron cargar los datos');
-    }
+  const handleVerTorta = () => {
+    setModalVisible(false);  // Cerrás el modal actual
+    setTimeout(() => {
+      navigation.navigate('Tortas', { editTortaId: formData.ID_TORTA });
+    }, 300);
   };
-const handleVerTorta = () => {
-  setModalVisible(false);  // Cerrás el modal actual
-  setTimeout(() => {
-    navigation.navigate('Tortas', { editTortaId: formData.ID_TORTA });  
-  }, 300);
-};
 
   // Función para obtener el precio por ID de receta (torta)
   const obtenerPrecioPorIdTorta = (ID_TORTA) => {
@@ -206,7 +186,7 @@ const handleVerTorta = () => {
     );
   };
 
-  const handleAgregarIngrediente = async () => {
+  const handleAgregarIngrediente = async (nuevoIngrediente, cantidadNuevo) => {
     try {
       if (!nuevoIngrediente || !cantidadNuevo) {
         Alert.alert('Error', 'Selecciona un ingrediente e ingresa la cantidad');
@@ -240,8 +220,6 @@ const handleVerTorta = () => {
           throw new Error(error);
         }
       }
-      setNuevoIngrediente(null);
-      setCantidadNuevo('');
       setIngredienteModalVisible(false);
       Alert.alert('Éxito', 'Ingrediente agregado correctamente');
     } catch (error) {
@@ -322,40 +300,20 @@ const handleVerTorta = () => {
 
   // Render para cada ingrediente (sin FlatList)
   const renderIngredienteItem = ({ item }) => {
-    const ingredienteInfo = ingredientes.find(i => i.id === item.ID_INGREDIENTE);
-    // Se obtiene el valor original para comparar y determinar la visualización del check
     const originalItem = formData.ingredientesOriginales.find(
       o => o.ID_INGREDIENTE === item.ID_INGREDIENTE
     );
     const originalValue = originalItem ? originalItem.total_cantidad : item.total_cantidad;
-    const showCheck =
-      item.total_cantidad.trim() !== "" && item.total_cantidad !== originalValue;
     return (
-      <View style={styles.ingredienteItem}>
-        <Text style={styles.ingredienteNombre}>
-          {ingredienteInfo?.nombre || 'Ingrediente no disponible'}
-        </Text>
-        <TextInput
-          style={styles.cantidadInput}
-          value={item.total_cantidad}
-          onChangeText={text => handleActualizarCantidad(item.ID_INGREDIENTE, text)}
-          keyboardType="numeric"
-          placeholder="Cant."
-          editable={!loading}
-        />
-        {showCheck && (
-          <Pressable onPress={() => handleConfirmUpdateQuantity(item)}>
-            <Ionicons name="checkmark-circle" size={24} color="#28a745" style={{ marginLeft: 8 }} />
-          </Pressable>
-        )}
-        <TouchableOpacity
-          onPress={() => handleEliminarIngrediente(item.ID_INGREDIENTE)}
-          disabled={loading}
-          style={{ marginLeft: 10 }}
-        >
-          <Ionicons name="trash-outline" size={20} color="#dc3545" />
-        </TouchableOpacity>
-      </View>
+      <IngredienteItem
+        item={item}
+        ingredientes={ingredientes}
+        loading={loading}
+        originalValue={originalValue}
+        onChangeCantidad={handleActualizarCantidad}
+        onConfirmUpdate={handleConfirmUpdateQuantity}
+        onDelete={handleEliminarIngrediente}
+      />
     );
   };
 
@@ -515,76 +473,14 @@ const renderModalContent = () => (
       </Modal>
 
       {/* Modal para agregar ingrediente */}
-      <Modal
+      <AddIngredienteModal
         visible={ingredienteModalVisible}
-        transparent={true}
-        animationType="slide"
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.3)'
-          }}
-        >
-          <View style={[styles.modalContenido, { width: '90%', backgroundColor: '#fff', borderRadius: 12, overflow: 'hidden' }]}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderColor: '#e0e0e0' }}>
-              <Text style={[styles.modalTitle, { fontSize: 20, fontWeight: 'bold', flex: 1 }]}>Agregar Ingrediente</Text>
-              <Pressable onPress={() => setIngredienteModalVisible(false)} hitSlop={10}>
-                <Text style={[styles.cerrarModal, { fontSize: 24 }]}>✕</Text>
-              </Pressable>
-            </View>
-            <View style={{ padding: 16 }}>
-              <Picker
-                selectedValue={nuevoIngrediente?.id}
-                onValueChange={(itemValue) => {
-                  const selected = ingredientesDisponibles.find(i => i.id === itemValue);
-                  setNuevoIngrediente(selected);
-                }}
-                style={styles.input}
-                dropdownIconColor="#666"
-                enabled={!loading}
-              >
-                <Picker.Item label="Seleccione un ingrediente" value={null} />
-                {ingredientesDisponibles.map(ing => (
-                  <Picker.Item key={ing.id} label={ing.nombre} value={ing.id} />
-                ))}
-              </Picker>
-              <TextInput
-                style={[styles.input, { marginTop: 15, backgroundColor: '#fff' }]}
-                placeholder="Cantidad *"
-                value={cantidadNuevo}
-                onChangeText={setCantidadNuevo}
-                keyboardType="numeric"
-                editable={!loading}
-              />
-              <Pressable
-                onPress={handleCrearIngrediente}
-                style={{ alignSelf: 'flex-end', marginVertical: 8 }}
-              >
-                <Text style={styles.seccionLink}>Crear nuevo ingrediente</Text>
-              </Pressable>
-              <View style={styles.modalBotones}>
-                <Pressable style={[styles.boton, { marginHorizontal: 8 }]} onPress={() => setIngredienteModalVisible(false)}>
-                  <Text style={styles.botonTexto}>Cancelar</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.boton, styles.botonPrimario, { marginHorizontal: 8 }]}
-                  onPress={handleAgregarIngrediente}
-                  disabled={!nuevoIngrediente || !cantidadNuevo || loading}
-                >
-                  {loading ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
-                    <Text style={styles.botonTexto}>Agregar</Text>
-                  )}
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </View>
-      </Modal>
+        onCancel={() => setIngredienteModalVisible(false)}
+        ingredientes={ingredientesDisponibles}
+        onSubmit={handleAgregarIngrediente}
+        onCreateIngrediente={handleCrearIngrediente}
+        loading={loading}
+      />
     </View>
   );
 };

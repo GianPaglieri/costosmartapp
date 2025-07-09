@@ -22,7 +22,6 @@ const RegisterScreen = ({ navigation }) => {
         { text: 'Ir a login', onPress: () => navigation.navigate('Login') },
       ]);
     } catch (error) {
-      console.error('Error al registrar usuario:', error.message);
       Alert.alert('Error', 'No se pudo registrar el usuario');
     }
   };

@@ -106,6 +106,10 @@ const handleVerTorta = () => {
       Alert.alert('Error', 'El nombre de la receta es requerido');
       return;
     }
+    if (formData.ingredientes.length === 0) {
+      Alert.alert('Error', 'Agrega al menos un ingrediente');
+      return;
+    }
     setLoading(true);
     try {
       let recetaId = formData.ID_TORTA;
@@ -462,12 +466,19 @@ const renderModalContent = () => (
   return (
     <View style={styles.container}>
       <Text style={styles.heroTitle}>Gestión de Recetas</Text>
-      <FlatList
-        data={recetas}
-        renderItem={renderRecetaItem}
-        keyExtractor={item => item.ID_TORTA.toString()}
-        contentContainerStyle={styles.scrollContainer}
-      />
+      {recetas.length === 0 ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Ionicons name="book-outline" size={72} color="#ccc" style={{ marginBottom: 16 }} />
+          <Text style={styles.heroSubtitle}>No hay recetas registradas</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={recetas}
+          renderItem={renderRecetaItem}
+          keyExtractor={item => item.ID_TORTA.toString()}
+          contentContainerStyle={styles.scrollContainer}
+        />
+      )}
 
       {/* Modal principal para crear o editar receta */}
       <Modal

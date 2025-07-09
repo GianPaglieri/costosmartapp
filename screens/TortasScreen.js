@@ -130,7 +130,13 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
             </Button>
             <Button
               mode="contained"
-              onPress={() => onSave(local)}
+              onPress={() => {
+                if (!local.nombre_torta.trim() || !local.descripcion_torta.trim()) {
+                  Alert.alert('Error', 'Nombre y descripción son obligatorios');
+                  return;
+                }
+                onSave(local);
+              }}
               style={tStyles.primaryButton}
               labelStyle={{ color: '#fff' }}
             >
@@ -175,6 +181,10 @@ export default function TortaScreen() {
   }, [route.params, tortas]);
 
   const handleAdd = async d => {
+    if (!d.nombre_torta.trim() || !d.descripcion_torta.trim()) {
+      Alert.alert('Error', 'Nombre y descripción son obligatorios');
+      return;
+    }
     const f = new FormData();
     f.append('nombre_torta', d.nombre_torta);
     f.append('descripcion_torta', d.descripcion_torta);
@@ -224,26 +234,33 @@ export default function TortaScreen() {
         <Text style={styles.botonAgregarTexto}>Agregar Torta</Text>
       </TouchableOpacity>
 
-      <FlatList
-        data={filtered}
-        keyExtractor={item => item.ID_TORTA.toString()}
-        contentContainerStyle={{ paddingBottom: 24 }}
-        renderItem={({ item }) => (
-          <Card style={[styles.card, tStyles.cardMargin]}>
-            <Card.Content>
-              <View style={tStyles.cardRow}>
-                <View style={tStyles.flex1}>
-                  <Text style={styles.cardTitle}>{item.nombre_torta}</Text>
-                  <Text style={styles.cardText}>{item.descripcion_torta}</Text>
+      {filtered.length === 0 ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Ionicons name="pizza-outline" size={72} color="#ccc" style={{ marginBottom: 16 }} />
+          <Text style={styles.heroSubtitle}>No hay tortas registradas</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filtered}
+          keyExtractor={item => item.ID_TORTA.toString()}
+          contentContainerStyle={{ paddingBottom: 24 }}
+          renderItem={({ item }) => (
+            <Card style={[styles.card, tStyles.cardMargin]}>
+              <Card.Content>
+                <View style={tStyles.cardRow}>
+                  <View style={tStyles.flex1}>
+                    <Text style={styles.cardTitle}>{item.nombre_torta}</Text>
+                    <Text style={styles.cardText}>{item.descripcion_torta}</Text>
+                  </View>
+                  <Pressable onPress={() => { setCurrent(item); setEditVisible(true); }}>
+                    <Text style={styles.seccionLink}>Editar</Text>
+                  </Pressable>
                 </View>
-                <Pressable onPress={() => { setCurrent(item); setEditVisible(true); }}>
-                  <Text style={styles.seccionLink}>Editar</Text>
-                </Pressable>
-              </View>
-            </Card.Content>
-          </Card>
-        )}
-      />
+              </Card.Content>
+            </Card>
+          )}
+        />
+      )}
 
       <EditTortaModal
         visible={editVisible}

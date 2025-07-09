@@ -20,7 +20,6 @@ export const sendAuthenticatedRequest = async (url, config = {}) => {
 
     return response.data;
   } catch (error) {
-    console.error('Error al enviar la petición autenticada:', error.message);
     throw error;
   }
 };
@@ -31,7 +30,6 @@ export const UserController = {
       const { data } = await axios.post(`${API_URL}/users/register`, userData);
       return data;
     } catch (error) {
-      console.error('Error:', error);
       throw error;
     }
   },
@@ -42,7 +40,6 @@ export const UserController = {
       await storeToken(data.token);
       return data;
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
       const mensajeBackend = error.response?.data?.error || error.response?.data?.message;
       if (mensajeBackend) {
         throw new Error(mensajeBackend);

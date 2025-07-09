@@ -11,7 +11,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Pressable,
-  Dimensions
+  Dimensions,
+  FlatList
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -353,7 +354,7 @@ const handleVerTorta = () => {
   // 1. Header con título (nombre de la receta o "Nueva Receta") y botón de cerrar
   // 2. Área con botón "Agregar Ingrediente" y listado scrollable de ingredientes
   // 3. Footer con botones "Cancelar" y "Guardar"
-  const renderModalContent = () => (
+const renderModalContent = () => (
     <View style={{ height: modalMaxHeight, backgroundColor: '#fff' }}>
       {/* Área con botón "Agregar Ingrediente" y listado */}
       <View style={{ flex: 1 }}>
@@ -427,39 +428,41 @@ const handleVerTorta = () => {
         </View>
       </View>
     </View>
+);
+
+  const renderRecetaItem = ({ item }) => (
+    <View style={styles.card}>
+      {item.imagen && (
+        <View style={{ position: 'relative' }}>
+          <Image
+            source={{ uri: `${API_URL}/${item.imagen}` }}
+            style={styles.cardImage}
+            resizeMode="cover"
+          />
+          <View style={styles.imageOverlay} />
+        </View>
+      )}
+      <View style={{ padding: 16 }}>
+        <Text style={styles.cardTitle}>{item.nombre_torta}</Text>
+        <Text style={styles.metricaValor}>{obtenerPrecioPorIdTorta(item.ID_TORTA)}</Text>
+        <View style={styles.cardActions}>
+          <Pressable onPress={() => openEditModal(item)}>
+            <Text style={styles.seccionLink}>Editar</Text>
+          </Pressable>
+        </View>
+      </View>
+    </View>
   );
 
   return (
     <View style={styles.container}>
       <Text style={styles.heroTitle}>Gestión de Recetas</Text>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {recetas.map(item => (
-          <View key={item.ID_TORTA.toString()} style={styles.card}>
-            {item.imagen && (
-              <View style={{ position: 'relative' }}>
-                <Image
-                  source={{ uri: `${API_URL}/${item.imagen}` }}
-                  style={styles.cardImage}
-                  resizeMode="cover"
-                />
-                <View style={styles.imageOverlay}>
-               
-                  
-                </View>
-              </View>
-            )}
-            <View style={{ padding: 16 }}>
-              <Text style={styles.cardTitle}>{item.nombre_torta}</Text>
-              <Text style={styles.metricaValor}>{obtenerPrecioPorIdTorta(item.ID_TORTA)}</Text>
-              <View style={styles.cardActions}>
-                <Pressable onPress={() => openEditModal(item)}>
-                  <Text style={styles.seccionLink}>Editar</Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+      <FlatList
+        data={recetas}
+        renderItem={renderRecetaItem}
+        keyExtractor={item => item.ID_TORTA.toString()}
+        contentContainerStyle={styles.scrollContainer}
+      />
 
       {/* Modal principal para crear o editar receta */}
       <Modal

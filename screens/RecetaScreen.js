@@ -241,6 +241,12 @@ const handleVerTorta = () => {
     }
   };
 
+  // Navegar a la vista de ingredientes y abrir el modal de creación
+  const handleCrearIngrediente = () => {
+    setIngredienteModalVisible(false);
+    navigation.navigate('Ingredientes', { openAdd: true });
+  };
+
   const handleEliminarIngrediente = async (ID_INGREDIENTE) => {
     try {
       setFormData(prev => ({
@@ -534,6 +540,12 @@ const handleVerTorta = () => {
                 keyboardType="numeric"
                 editable={!loading}
               />
+              <Pressable
+                onPress={handleCrearIngrediente}
+                style={{ alignSelf: 'flex-end', marginVertical: 8 }}
+              >
+                <Text style={styles.seccionLink}>Crear nuevo ingrediente</Text>
+              </Pressable>
               <View style={styles.modalBotones}>
                 <Pressable style={[styles.boton, { marginHorizontal: 8 }]} onPress={() => setIngredienteModalVisible(false)}>
                   <Text style={styles.botonTexto}>Cancelar</Text>

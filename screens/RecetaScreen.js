@@ -210,6 +210,9 @@ const handleVerTorta = () => {
       }
       const cantidad = parseFloat(cantidadNuevo);
       if (isNaN(cantidad)) throw new Error('Cantidad inválida');
+
+      setLoading(true);
+
       const nuevoIng = {
         ID_INGREDIENTE: nuevoIngrediente.id,
         total_cantidad: cantidad.toString(),
@@ -239,6 +242,8 @@ const handleVerTorta = () => {
       Alert.alert('Éxito', 'Ingrediente agregado correctamente');
     } catch (error) {
       Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -58,12 +58,20 @@ const Navigation = () => {
         <Drawer.Screen
           name="Login"
           component={LoginScreen}
-          options={{ drawerItemStyle: { height: 0 } }}
+          options={{
+            drawerItemStyle: { height: 0 },
+            headerShown: false,
+            swipeEnabled: false,
+          }}
         />
         <Drawer.Screen
           name="Register"
           component={RegisterScreen}
-          options={{ drawerItemStyle: { height: 0 } }}
+          options={{
+            drawerItemStyle: { height: 0 },
+            headerShown: false,
+            swipeEnabled: false,
+          }}
         />
 
       </Drawer.Navigator>

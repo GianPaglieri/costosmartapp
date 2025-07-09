@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -250,6 +251,8 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave }) => {
 });
 
 export default function IngredientScreen() {
+  const route = useRoute();
+  const navigation = useNavigation();
   const [ingredientes, setIngredientes] = useState([]);
   const [addVisible, setAddVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
@@ -266,6 +269,14 @@ export default function IngredientScreen() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  // Si navega desde Recetas con el flag openAdd, mostrar el modal al abrir
+  useEffect(() => {
+    if (route.params?.openAdd) {
+      setAddVisible(true);
+      navigation.setParams({ openAdd: false });
+    }
+  }, [route.params]);
 
   const filtered = ingredientes.filter(i =>
     i.nombre.toLowerCase().includes(search.toLowerCase())

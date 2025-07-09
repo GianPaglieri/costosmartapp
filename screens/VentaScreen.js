@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ScrollView
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { Card, Divider } from 'react-native-paper';
 import styles, { ventaStyles } from '../components/styles';
@@ -106,6 +107,15 @@ export default function SalesByCakeScreen() {
 
   if (loading) {
     return <ActivityIndicator size="large" color="#007bff" style={{ marginTop: 40 }} />;
+  }
+
+  if (data.length === 0) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Ionicons name="cart-outline" size={72} color="#ccc" style={{ marginBottom: 16 }} />
+        <Text style={styles.heroSubtitle}>No hay ventas registradas</Text>
+      </View>
+    );
   }
 
   return (

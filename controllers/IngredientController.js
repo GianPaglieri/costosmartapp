@@ -10,11 +10,9 @@ export const fetchIngredientes = async () => {
     if (data.success && Array.isArray(data.ingredientes)) {
       return data.ingredientes;
     } else {
-      console.error('La respuesta no contiene una lista de ingredientes válida:', data);
       return [];
     }
   } catch (error) {
-    console.error('Error al obtener los ingredientes:', error);
     return [];
   }
 };
@@ -24,7 +22,6 @@ export const fetchIngredientesMenosStock = async () => {
     const data = await sendAuthenticatedRequest(`${API_URL}/ingredientes/menosstock`);
     return data;
   } catch (error) {
-    console.error('Error al obtener los ingredientes con menos stock:', error);
     return [];
   }
 };
@@ -44,7 +41,6 @@ export const agregarIngrediente = async (ingrediente) => {
     );
     return data;
   } catch (error) {
-    console.error('Error al agregar el ingrediente:', error);
     return { success: false };
   }
 };
@@ -64,7 +60,6 @@ export const editarIngrediente = async (ingrediente) => {
     );
     return data;
   } catch (error) {
-    console.error('Error al editar el ingrediente:', error);
     return { success: false };
   }
 };
@@ -84,7 +79,6 @@ export const borrarIngrediente = async (id) => {
       return { success: false, error: data };
     }
   } catch (error) {
-    console.error('Error en la solicitud de borrado del ingrediente:', error);
     return { success: false, error };
   }
 };

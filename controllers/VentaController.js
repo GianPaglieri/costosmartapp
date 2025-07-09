@@ -22,7 +22,6 @@ export const Ventas = async () => {
 
     return ventasConNombres;
   } catch (error) {
-    console.error('Error al obtener las ventas con nombres de tortas:', error);
     return [];
   }
 };
@@ -32,7 +31,6 @@ export const obtenerVentas = async () => {
 
       return ventas;
   } catch (error) {
-      console.error('Error al obtener las ventas:', error.message);
       throw error;
   }
 };
@@ -47,7 +45,6 @@ export const registrarVenta = async (idTorta) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error al registrar la venta:', error);
     throw error;
   }
 };
@@ -63,7 +60,6 @@ export const obtenerCantidadVentas = async () => {
 
       return cantidadVentas;
     } catch (error) {
-      console.error('Error al obtener la cantidad de ventas:', error);
       throw error;
     }
   };
@@ -78,7 +74,6 @@ export const obtenerGanancias = async () => {
 
     return ganancias;
   } catch (error) {
-    console.error('Error al obtener ganancias:', error);
     throw error;
   }
 };
@@ -94,7 +89,6 @@ export const obtenerCantidadVentasSemanales = async () => {
 
     return cantidadVentasSemana;
   } catch (error) {
-    console.error('Error al obtener la cantidad de ventas semanales:', error);
     throw error;
   }
 };
@@ -110,7 +104,6 @@ export const obtenerPorcentajeVentas = async () => {
 
     return porcentajeVentas;
   } catch (error) {
-    console.error('Error al obtener el porcentaje de ventas', error);
     throw error;
   }
 };

@@ -15,7 +15,6 @@ export const fetchRecetas = async () => {
       }))
     }));
   } catch (error) {
-    console.error('Error al obtener las recetas:', error);
     return [];
   }
 };
@@ -31,7 +30,6 @@ export const agregarReceta = async (recetaBase) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error al crear receta base:', error);
     return { success: false, error: error.response?.data?.error || 'Error al crear receta' };
   }
 };
@@ -63,14 +61,9 @@ export const agregarIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantidad) => 
     };
 
   } catch (error) {
-    console.error('Error completo:', {
-      message: error.message,
-      response: error.response?.data
-    });
-    
-    return { 
+    return {
       success: false,
-      error: error.response?.data?.error || error.message 
+      error: error.response?.data?.error || error.message
     };
   }
 };
@@ -90,12 +83,6 @@ export const editarCantidadIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantid
       : { success: false, error: response.data.error };
 
   } catch (error) {
-    console.error('[ERROR] Error al actualizar cantidad:', {
-      message: error.message,
-      response: error.response?.data,
-      timestamp: new Date().toISOString()
-    });
-    
     return {
       success: false,
       error: error.response?.data?.error || 'Error al actualizar cantidad'
@@ -116,7 +103,6 @@ export const eliminarIngrediente = async (ID_TORTA, ID_INGREDIENTE) => {
       : { success: false, error: response.data.error };
 
   } catch (error) {
-    console.error('Error al eliminar ingrediente:', error.response?.data || error);
     return {
       success: false,
       error: error.response?.data?.error || 'Error al eliminar ingrediente'
@@ -137,7 +123,6 @@ export const borrarReceta = async (ID_TORTA) => {
       : { success: false, error: response.data.error };
 
   } catch (error) {
-    console.error('Error al eliminar receta:', error.response?.data || error);
     return {
       success: false,
       error: error.response?.data?.error || 'Error al eliminar receta'

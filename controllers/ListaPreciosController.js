@@ -6,7 +6,6 @@ export const fetchListaPrecios = async () => {
     const data = await sendAuthenticatedRequest(`${API_URL}/lista_precios`);
     return data;
   } catch (error) {
-    console.error('Error al obtener la lista de precios:', error.message);
     return [];
   }
 };

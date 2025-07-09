@@ -126,14 +126,26 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
             </Button>
             <Button
               mode="contained"
-              onPress={() => onSave({
-                id: local.id,
-                nombre: local.nombre,
-                unidad_Medida: local.unidad_Medida,
-                tamano_Paquete: parseFloat(local.tamano_Paquete),
-                costo: parseFloat(local.costo),
-                CantidadStock: parseInt(local.CantidadStock, 10),
-              })}
+              onPress={() => {
+                if (
+                  !local.nombre.trim() ||
+                  !local.unidad_Medida.trim() ||
+                  !local.tamano_Paquete ||
+                  !local.costo ||
+                  !local.CantidadStock
+                ) {
+                  Alert.alert('Error', 'Todos los campos son obligatorios');
+                  return;
+                }
+                onSave({
+                  id: local.id,
+                  nombre: local.nombre,
+                  unidad_Medida: local.unidad_Medida,
+                  tamano_Paquete: parseFloat(local.tamano_Paquete),
+                  costo: parseFloat(local.costo),
+                  CantidadStock: parseInt(local.CantidadStock, 10),
+                });
+              }}
               style={ingStyles.saveButton}
             >
               Guardar
@@ -233,13 +245,25 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave }) => {
           </Button>
           <Button
             mode="contained"
-            onPress={() => onSave({
-              nombre: local.nombre,
-              unidad_Medida: local.unidad_Medida,
-              tamano_Paquete: parseFloat(local.tamano_Paquete),
-              costo: parseFloat(local.costo),
-              CantidadStock: parseInt(local.CantidadStock, 10),
-            })}
+            onPress={() => {
+              if (
+                !local.nombre.trim() ||
+                !local.unidad_Medida.trim() ||
+                !local.tamano_Paquete ||
+                !local.costo ||
+                !local.CantidadStock
+              ) {
+                Alert.alert('Error', 'Todos los campos son obligatorios');
+                return;
+              }
+              onSave({
+                nombre: local.nombre,
+                unidad_Medida: local.unidad_Medida,
+                tamano_Paquete: parseFloat(local.tamano_Paquete),
+                costo: parseFloat(local.costo),
+                CantidadStock: parseInt(local.CantidadStock, 10),
+              });
+            }}
             style={ingStyles.saveButton}
           >
             Guardar

@@ -13,8 +13,7 @@ import {
   editarTorta,
   borrarTorta
 } from '../controllers/TortaController';
-
-const BASE_URL = 'http://149.50.131.253/api';
+import { API_URL } from '../src/services/api';
 const PRIMARY_BLUE = '#007bff';
 
 const FieldLabel = ({ children }) => (
@@ -31,7 +30,7 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
         ID_TORTA: torta.ID_TORTA,
         nombre_torta: torta.nombre_torta,
         descripcion_torta: torta.descripcion_torta,
-        imagen: torta.imagen ? `${BASE_URL}/${torta.imagen}` : '',
+        imagen: torta.imagen ? `${API_URL}/${torta.imagen}` : '',
       });
     }
   }, [visible, torta]);
@@ -202,7 +201,7 @@ export default function TortaScreen() {
     f.append('ID_TORTA', d.ID_TORTA);
     f.append('nombre_torta', d.nombre_torta);
     f.append('descripcion_torta', d.descripcion_torta);
-    if (d.imagen && !d.imagen.startsWith(BASE_URL)) {
+    if (d.imagen && !d.imagen.startsWith(API_URL)) {
       const name = d.imagen.split('/').pop(), type = name.split('.').pop();
       f.append('imagen', { uri: d.imagen, name, type: `image/${type}` });
     }

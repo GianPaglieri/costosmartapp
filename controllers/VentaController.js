@@ -1,12 +1,11 @@
-import axios from 'axios';
+import api from '../src/services/api';
 import UserController, { sendAuthenticatedRequest } from './UserController';
-import { API_URL } from '../config';
 
 // Controlador de ventas
 export const Ventas = async () => {
   try {
-    const ventas = await sendAuthenticatedRequest(`${API_URL}/ventas`);
-    const tortas = await sendAuthenticatedRequest(`${API_URL}/tortas`);
+    const ventas = await sendAuthenticatedRequest('/ventas');
+    const tortas = await sendAuthenticatedRequest('/tortas');
 
     if (!ventas || !tortas) {
       throw new Error('Error al obtener las listas de ventas o tortas');
@@ -27,7 +26,7 @@ export const Ventas = async () => {
 };
 export const obtenerVentas = async () => {
   try {
-      const ventas = await sendAuthenticatedRequest(`${API_URL}/ventas`);
+      const ventas = await sendAuthenticatedRequest('/ventas');
 
       return ventas;
   } catch (error) {
@@ -38,7 +37,7 @@ export const obtenerVentas = async () => {
 export const registrarVenta = async (idTorta) => {
   try {
     const token = await UserController.getToken();
-    const response = await axios.post(`${API_URL}/ventas`, { id_torta: idTorta }, {
+    const response = await api.post('/ventas', { id_torta: idTorta }, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -51,7 +50,7 @@ export const registrarVenta = async (idTorta) => {
 
 export const obtenerCantidadVentas = async () => {
     try {
-      const response = await sendAuthenticatedRequest(`${API_URL}/ventas/cantidad`);
+      const response = await sendAuthenticatedRequest('/ventas/cantidad');
       const cantidadVentas = response?.cantidadVentas;
 
       if (cantidadVentas === undefined) {
@@ -66,7 +65,7 @@ export const obtenerCantidadVentas = async () => {
 
 export const obtenerGanancias = async () => {
   try {
-    const response = await sendAuthenticatedRequest(`${API_URL}/ventas/ganancias`);
+    const response = await sendAuthenticatedRequest('/ventas/ganancias');
     const ganancias = response?.ganancias;
     if (ganancias === undefined) {
       throw new Error('La propiedad "ganancias" no está definida en la respuesta');
@@ -80,7 +79,7 @@ export const obtenerGanancias = async () => {
 
 export const obtenerCantidadVentasSemanales = async () => {
   try {
-    const response = await sendAuthenticatedRequest(`${API_URL}/ventas/cantidad-semana`);
+    const response = await sendAuthenticatedRequest('/ventas/cantidad-semana');
     const cantidadVentasSemana = response?.cantidadVentasSemana;
 
     if (cantidadVentasSemana === undefined) {
@@ -95,7 +94,7 @@ export const obtenerCantidadVentasSemanales = async () => {
 
 export const obtenerPorcentajeVentas = async () => {
   try {
-    const response = await sendAuthenticatedRequest(`${API_URL}/ventas/porcentaje-ventas`);
+    const response = await sendAuthenticatedRequest('/ventas/porcentaje-ventas');
     const porcentajeVentas = response?.porcentajeCambio;
 
     if (porcentajeVentas === undefined) {

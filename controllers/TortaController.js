@@ -1,10 +1,9 @@
 import { sendAuthenticatedRequest, UserController } from './UserController';
-import axios from 'axios';
-import { API_URL } from '../config';
+import api from '../src/services/api';
 
 export const fetchTortas = async () => {
   try {
-    const data = await sendAuthenticatedRequest(`${API_URL}/tortas`);
+    const data = await sendAuthenticatedRequest('/tortas');
     return data;
   } catch (error) {
     return [];
@@ -14,7 +13,7 @@ export const fetchTortas = async () => {
 export const agregarTorta = async (tortaData) => {
   try {
     const token = await UserController.getToken();
-    const response = await axios.post(`${API_URL}/tortas`, tortaData, {
+    const response = await api.post('/tortas', tortaData, {
       headers: {
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
@@ -32,7 +31,7 @@ export const agregarTorta = async (tortaData) => {
 
 export const editarTorta = async (idTorta, formData) => {
   try {
-    const { data } = await axios.put(`${API_URL}/tortas/${idTorta}`, formData, {
+    const { data } = await api.put(`/tortas/${idTorta}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return data;
@@ -44,7 +43,7 @@ export const editarTorta = async (idTorta, formData) => {
 export const borrarTorta = async (id) => {
   try {
     const token = await UserController.getToken();
-    const response = await axios.delete(`${API_URL}/tortas/${id}`, {
+    const response = await api.delete(`/tortas/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

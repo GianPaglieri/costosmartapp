@@ -1,6 +1,5 @@
-import axios from 'axios';
+import api from '../src/services/api';
 import * as SecureStore from 'expo-secure-store';
-import { API_URL } from '../config';
 
 let authToken = null;
 
@@ -11,7 +10,7 @@ export const sendAuthenticatedRequest = async (url, config = {}) => {
       throw new Error('No se ha obtenido un token de autenticación');
     }
 
-    const response = await axios({
+    const response = await api({
       url,
       headers: { 'Authorization': `Bearer ${token}` },
       method: 'get',
@@ -27,7 +26,7 @@ export const sendAuthenticatedRequest = async (url, config = {}) => {
 export const UserController = {
   registerUser: async (userData) => {
     try {
-      const { data } = await axios.post(`${API_URL}/users/register`, userData);
+      const { data } = await api.post('/users/register', userData);
       return data;
     } catch (error) {
       throw error;
@@ -36,7 +35,7 @@ export const UserController = {
 
   loginUser: async (email, contrasena) => {
     try {
-      const { data } = await axios.post(`${API_URL}/login`, { email, contrasena });
+      const { data } = await api.post('/login', { email, contrasena });
       await storeToken(data.token);
       return data;
     } catch (error) {

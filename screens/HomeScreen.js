@@ -208,16 +208,6 @@ export default function HomeScreen({ navigation }) {
           )}
         </View>
 
-        {/* VENTAS POR TORTA (placeholder) */}
-        <View style={styles.seccion}>
-          <View style={styles.seccionHeader}>
-            <Text style={styles.seccionTitulo}>Ventas por Torta</Text>
-            <Pressable onPress={() => {}}>
-              <Text style={styles.seccionLink}>Ver detalle →</Text>
-            </Pressable>
-          </View>
-          {/* espacio en blanco para futuro gráfico */}
-        </View>
 
         {/* MODAL NUEVA VENTA */}
         <Modal

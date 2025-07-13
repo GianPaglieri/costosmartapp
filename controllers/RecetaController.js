@@ -1,10 +1,9 @@
 import { sendAuthenticatedRequest, UserController } from './UserController';
-import axios from 'axios';
-import { API_URL } from '../config';
+import api from '../src/services/api';
 
 export const fetchRecetas = async () => {
   try {
-    const response = await sendAuthenticatedRequest(`${API_URL}/recetas`);
+    const response = await sendAuthenticatedRequest('/recetas');
 
     // Procesar la respuesta agrupada del backend
     return response.map(receta => ({
@@ -22,7 +21,7 @@ export const fetchRecetas = async () => {
 export const agregarReceta = async (recetaBase) => {
   try {
     const token = await UserController.getToken();
-    const response = await axios.post(`${API_URL}/tortas`, recetaBase, {
+    const response = await api.post('/tortas', recetaBase, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -37,8 +36,8 @@ export const agregarReceta = async (recetaBase) => {
 export const agregarIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantidad) => {
   try {
     const token = await UserController.getToken();
-    const response = await axios.post(
-      `${API_URL}/recetas/nueva-relacion`,
+    const response = await api.post(
+      '/recetas/nueva-relacion',
       { ID_TORTA, ID_INGREDIENTE, cantidad },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -72,8 +71,8 @@ export const editarCantidadIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantid
   try {
     const token = await UserController.getToken();
 
-    const response = await axios.put(
-      `${API_URL}/recetas/${ID_TORTA}/${ID_INGREDIENTE}`,
+    const response = await api.put(
+      `/recetas/${ID_TORTA}/${ID_INGREDIENTE}`,
       { total_cantidad: cantidad },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -93,8 +92,8 @@ export const editarCantidadIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantid
 export const eliminarIngrediente = async (ID_TORTA, ID_INGREDIENTE) => {
   try {
     const token = await UserController.getToken();
-    const response = await axios.delete(
-      `${API_URL}/recetas/${ID_TORTA}/${ID_INGREDIENTE}`,
+    const response = await api.delete(
+      `/recetas/${ID_TORTA}/${ID_INGREDIENTE}`,
       { headers: { 'Authorization': `Bearer ${token}` } }
     );
 
@@ -113,8 +112,8 @@ export const eliminarIngrediente = async (ID_TORTA, ID_INGREDIENTE) => {
 export const borrarReceta = async (ID_TORTA) => {
   try {
     const token = await UserController.getToken();
-    const response = await axios.delete(
-      `${API_URL}/recetas/${ID_TORTA}`,
+    const response = await api.delete(
+      `/recetas/${ID_TORTA}`,
       { headers: { 'Authorization': `Bearer ${token}` } }
     );
 

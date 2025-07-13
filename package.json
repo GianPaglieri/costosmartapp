@@ -9,6 +9,7 @@
     "web": "expo start --web",
     "prebuild": "expo prebuild",
     "build:android": "expo prebuild && expo run:android"
+    ,"test": "jest"
   },
   "dependencies": {
     "expo": "^53.0.9",
@@ -44,7 +45,9 @@
     "metro-transform-worker": "^0.82.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.0"
+    "@babel/core": "^7.24.0",
+    "jest": "^29.7.0",
+    "@testing-library/react-native": "^12.1.5"
   },
   "private": true
 }

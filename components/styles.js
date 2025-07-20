@@ -520,6 +520,13 @@ const tortaStyles = StyleSheet.create({
   flex1: {
     flex: 1,
   },
+  listThumbnail: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 12,
+    backgroundColor: '#eee',
+  },
   fieldLabel: {
     fontSize: 14,
     fontWeight: '600',

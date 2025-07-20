@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import UserController from '../controllers/UserController';
 import styles from '../components/styles';
@@ -9,12 +10,18 @@ const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [contrasena, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
+    if (!nombre.trim() || !email.trim() || !contrasena.trim()) {
+      Alert.alert('Error', 'Completa todos los campos');
+      return;
+    }
     if (contrasena !== confirmPassword) {
       Alert.alert('Error', 'Las contraseñas no coinciden');
       return;
     }
+    setLoading(true);
     try {
       const userData = { nombre, email, contrasena };
       await UserController.registerUser(userData);
@@ -23,6 +30,8 @@ const RegisterScreen = ({ navigation }) => {
       ]);
     } catch (error) {
       Alert.alert('Error', 'No se pudo registrar el usuario');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -30,40 +39,54 @@ const RegisterScreen = ({ navigation }) => {
     <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
       <View style={[styles.card, { width: '90%', maxWidth: 400, padding: 24 }]}>
         <Text style={[styles.cardTitle, { fontSize: 24, textAlign: 'center', marginBottom: 16 }]}>Crear Cuenta</Text>
-        <Text style={[styles.label, { marginBottom: 4 }]}>Nombre</Text>
         <TextInput
-          style={[styles.input, { marginBottom: 16 }]}
+          mode="outlined"
+          label="Nombre"
           placeholder="Tu nombre"
           value={nombre}
           onChangeText={setNombre}
+          style={[styles.input, { marginBottom: 16, backgroundColor: '#fff' }]}
+          accessibilityLabel="campo-nombre"
+          testID="register-name"
         />
-        <Text style={[styles.label, { marginBottom: 4 }]}>Correo electrónico</Text>
         <TextInput
-          style={[styles.input, { marginBottom: 16 }]}
+          mode="outlined"
+          label="Correo electrónico"
           placeholder="usuario@ejemplo.com"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
+          style={[styles.input, { marginBottom: 16, backgroundColor: '#fff' }]}
+          accessibilityLabel="campo-email"
+          testID="register-email"
         />
-        <Text style={[styles.label, { marginBottom: 4 }]}>Contraseña</Text>
         <TextInput
-          style={[styles.input, { marginBottom: 16 }]}
+          mode="outlined"
+          label="Contraseña"
           placeholder="••••••••"
           secureTextEntry
           value={contrasena}
           onChangeText={setPassword}
+          style={[styles.input, { marginBottom: 16, backgroundColor: '#fff' }]}
+          accessibilityLabel="campo-contrasena"
+          testID="register-password"
         />
-        <Text style={[styles.label, { marginBottom: 4 }]}>Confirmar contraseña</Text>
         <TextInput
-          style={[styles.input, { marginBottom: 24 }]}
+          mode="outlined"
+          label="Confirmar contraseña"
           placeholder="••••••••"
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
+          style={[styles.input, { marginBottom: 24, backgroundColor: '#fff' }]}
+          accessibilityLabel="campo-confirmar"
+          testID="register-confirm"
         />
         <Pressable
           onPress={handleRegister}
+          disabled={loading}
+          accessibilityRole="button"
           style={({ pressed }) => [
             styles.botonPrimario,
             {
@@ -82,10 +105,21 @@ const RegisterScreen = ({ navigation }) => {
             },
           ]}
         >
-          <Ionicons name="person-add-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.botonTexto}>Registrarse</Text>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Ionicons name="person-add-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
+              <Text style={styles.botonTexto}>Registrarse</Text>
+            </>
+          )}
         </Pressable>
-        <Pressable onPress={() => navigation.navigate('Login')} style={{ marginTop: 16, alignSelf: 'center' }}>
+        <Pressable
+          onPress={() => navigation.navigate('Login')}
+          style={{ marginTop: 16, alignSelf: 'center' }}
+          accessibilityRole="link"
+          accessibilityLabel="ir-a-login"
+        >
           <Text style={styles.seccionLink}>¿Ya tienes una cuenta? Inicia sesión</Text>
         </Pressable>
       </View>

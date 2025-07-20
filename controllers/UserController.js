@@ -55,6 +55,11 @@ export const UserController = {
     authToken = storedToken;
     return storedToken;
   },
+
+  logout: async () => {
+    await SecureStore.deleteItemAsync('authToken');
+    authToken = null;
+  },
 };
 
 const storeToken = async (token) => {

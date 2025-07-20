@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+import { View, Text, Pressable, Alert, ActivityIndicator } from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import UserController from '../controllers/UserController';
 import styles from '../components/styles';
@@ -7,13 +8,21 @@ import styles from '../components/styles';
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [contrasena, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    if (!email.trim() || !contrasena.trim()) {
+      Alert.alert('Error', 'Completa email y contraseña');
+      return;
+    }
+    setLoading(true);
     try {
-      const response = await UserController.loginUser(email, contrasena);
+      await UserController.loginUser(email, contrasena);
       navigation.navigate('HomeScreen');
     } catch (error) {
       Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -24,28 +33,36 @@ const LoginScreen = ({ navigation }) => {
           Bienvenido
         </Text>
 
-        <Text style={[styles.label, { marginBottom: 4 }]}>Correo electrónico</Text>
         <TextInput
-          style={[styles.input, { marginBottom: 16 }]}
+          mode="outlined"
+          label="Correo electrónico"
           placeholder="usuario@ejemplo.com"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
+          style={[styles.input, { marginBottom: 16, backgroundColor: '#fff' }]}
+          accessibilityLabel="campo-email"
+          testID="login-email"
         />
 
-        <Text style={[styles.label, { marginBottom: 4 }]}>Contraseña</Text>
         <TextInput
-          style={[styles.input, { marginBottom: 24 }]}
+          mode="outlined"
+          label="Contraseña"
           placeholder="••••••••"
           secureTextEntry
           value={contrasena}
           onChangeText={setPassword}
+          style={[styles.input, { marginBottom: 24, backgroundColor: '#fff' }]}
+          accessibilityLabel="campo-contrasena"
+          testID="login-password"
         />
 
         {/* Botón mejorado */}
         <Pressable
           onPress={handleLogin}
+          disabled={loading}
+          accessibilityRole="button"
           style={({ pressed }) => [
             styles.botonPrimario,
             {
@@ -55,22 +72,30 @@ const LoginScreen = ({ navigation }) => {
               width: '100%',
               paddingVertical: 14,
               borderRadius: 12,
-              elevation: 4,             // Android
-              shadowColor: '#000',      // iOS
+              elevation: 4,
+              shadowColor: '#000',
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.25,
               shadowRadius: 3.84,
               opacity: pressed ? 0.8 : 1,
-            }
+            },
           ]}
         >
-          <Ionicons name="log-in-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.botonTexto}>Iniciar Sesión</Text>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Ionicons name="log-in-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
+              <Text style={styles.botonTexto}>Iniciar Sesión</Text>
+            </>
+          )}
         </Pressable>
 
         <Pressable
           onPress={() => navigation.navigate('Register')}
           style={{ marginTop: 16, alignSelf: 'center' }}
+          accessibilityRole="link"
+          accessibilityLabel="registrarse"
         >
           <Text style={styles.seccionLink}>
             ¿No tienes una cuenta? Regístrate

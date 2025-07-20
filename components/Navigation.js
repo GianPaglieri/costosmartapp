@@ -10,6 +10,7 @@ import IngredientScreen from '../screens/IngredientScreen';
 import TortasScreen from '../screens/TortasScreen';
 import RecetaScreen from '../screens/RecetaScreen';
 import VentaScreen from '../screens/VentaScreen';
+import UserController from '../controllers/UserController';
 
 const Drawer = createDrawerNavigator();
 
@@ -24,7 +25,8 @@ const Navigation = () => {
         { text: 'Cancelar', style: 'cancel' },
         {
           text: 'Cerrar sesión',
-          onPress: () => {
+          onPress: async () => {
+            await UserController.logout();
             navigation.reset({
               index: 0,
               routes: [{ name: 'Login' }],

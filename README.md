@@ -23,3 +23,28 @@ This command runs `expo prebuild` and then `expo run:android`.
 It is also recommended to keep dependencies up to date. The project includes
 recent versions of `react-native-paper` and `react-native-image-picker` which
 support Expo's new architecture.
+
+## API configuration
+
+The app expects an `API_URL` value in the Expo config. You can supply it using an
+`app.config.js` file that reads from environment variables:
+
+```js
+import 'dotenv/config';
+
+export default ({ config }) => ({
+  ...config,
+  extra: {
+    ...config.extra,
+    API_URL: process.env.API_URL,
+  },
+});
+```
+
+Create a `.env` file at the project root and define your endpoint:
+
+```env
+API_URL=https://example.com/api
+```
+
+`src/services/api.js` reads `API_URL` from the Expo config at runtime.

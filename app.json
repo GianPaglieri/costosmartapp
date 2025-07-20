@@ -1,7 +1,7 @@
 {
   "expo": {
     "extra": {
-      "API_URL": "http://149.50.131.253/api"
+      "API_URL": "YOUR_API_URL"
     },
     "android": {
       "package": "com.anonymous.app"

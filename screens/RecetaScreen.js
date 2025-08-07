@@ -18,7 +18,7 @@ import { Picker } from '@react-native-picker/picker';
 import { Ionicons } from '@expo/vector-icons';
 import styles from '../components/styles';
 import { API_URL } from '../src/services/api';
-import AddIngredienteModal from '../components/AddIngredienteModal';
+import AddIngredientToRecipeModal from '../components/AddIngredientToRecipeModal';
 import IngredienteItem from '../components/IngredienteItem';
 import useRecetas from '../hooks/useRecetas';
 import {
@@ -473,7 +473,7 @@ const renderModalContent = () => (
       </Modal>
 
       {/* Modal para agregar ingrediente */}
-      <AddIngredienteModal
+      <AddIngredientToRecipeModal
         visible={ingredienteModalVisible}
         onCancel={() => setIngredienteModalVisible(false)}
         ingredientes={ingredientesDisponibles}

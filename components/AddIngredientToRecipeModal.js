@@ -3,7 +3,14 @@ import { Modal, View, Text, TextInput, ActivityIndicator, Pressable } from 'reac
 import { Picker } from '@react-native-picker/picker';
 import styles from './styles';
 
-const AddIngredienteModal = ({ visible, onCancel, ingredientes, onSubmit, onCreateIngrediente, loading }) => {
+const AddIngredientToRecipeModal = ({
+  visible,
+  onCancel,
+  ingredientes,
+  onSubmit,
+  onCreateIngrediente,
+  loading,
+}) => {
   const [selected, setSelected] = useState(null);
   const [cantidad, setCantidad] = useState('');
 
@@ -79,4 +86,4 @@ const AddIngredienteModal = ({ visible, onCancel, ingredientes, onSubmit, onCrea
   );
 };
 
-export default AddIngredienteModal;
+export default AddIngredientToRecipeModal;

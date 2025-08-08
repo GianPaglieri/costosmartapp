@@ -1,29 +1,7 @@
 import api from '../src/services/api';
 import UserController, { sendAuthenticatedRequest } from './UserController';
 
-// Controlador de ventas
-export const Ventas = async () => {
-  try {
-    const ventas = await sendAuthenticatedRequest('/ventas');
-    const tortas = await sendAuthenticatedRequest('/tortas');
 
-    if (!ventas || !tortas) {
-      throw new Error('Error al obtener las listas de ventas o tortas');
-    }
-
-    const ventasConNombres = ventas.map((venta) => {
-      const tortaAsociada = tortas.find((torta) => torta.ID_TORTA === venta.ID_TORTA);
-      return {
-        ...venta,
-        nombre_torta: tortaAsociada ? tortaAsociada.nombre_torta : 'Torta no encontrada',
-      };
-    });
-
-    return ventasConNombres;
-  } catch (error) {
-    return [];
-  }
-};
 export const obtenerVentas = async () => {
   try {
       const ventas = await sendAuthenticatedRequest('/ventas');

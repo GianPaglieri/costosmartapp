@@ -1,7 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
-import { Alert } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Alert, View, ActivityIndicator } from 'react-native';
+import { useAuth } from '../contexts/AuthContext';
 
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen';
@@ -10,13 +12,20 @@ import IngredientScreen from '../screens/IngredientScreen';
 import TortasScreen from '../screens/TortasScreen';
 import RecetaScreen from '../screens/RecetaScreen';
 import VentaScreen from '../screens/VentaScreen';
-import UserController from '../controllers/UserController';
 
+const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const Navigation = () => {
+const AuthStack = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="Register" component={RegisterScreen} />
+  </Stack.Navigator>
+);
 
-  // Función de logout directo
+const MainDrawer = () => {
+  const { logout } = useAuth();
+
   const handleLogout = (navigation) => {
     Alert.alert(
       'Cerrar sesión',
@@ -26,10 +35,10 @@ const Navigation = () => {
         {
           text: 'Cerrar sesión',
           onPress: async () => {
-            await UserController.logout();
+            await logout();
             navigation.reset({
               index: 0,
-              routes: [{ name: 'Login' }],
+              routes: [{ name: 'Auth' }],
             });
           }
         }
@@ -38,45 +47,48 @@ const Navigation = () => {
   };
 
   return (
-    <NavigationContainer>
-      <Drawer.Navigator
-        initialRouteName="Login"
-        drawerContent={(props) => (
-          <DrawerContentScrollView {...props}>
-            <DrawerItemList {...props} />
-            <DrawerItem
-              label="Cerrar sesión"
-              labelStyle={{ color: 'red', fontWeight: 'bold' }}
-              onPress={() => handleLogout(props.navigation)}
-            />
-          </DrawerContentScrollView>
-        )}
-      >
-        <Drawer.Screen name="HomeScreen" component={HomeScreen} />
-        <Drawer.Screen name="Ingredientes" component={IngredientScreen} />
-        <Drawer.Screen name="Tortas" component={TortasScreen} />
-        <Drawer.Screen name="Recetas" component={RecetaScreen} />
-        <Drawer.Screen name="Ventas" component={VentaScreen} />
-        <Drawer.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{
-            drawerItemStyle: { height: 0 },
-            headerShown: false,
-            swipeEnabled: false,
-          }}
-        />
-        <Drawer.Screen
-          name="Register"
-          component={RegisterScreen}
-          options={{
-            drawerItemStyle: { height: 0 },
-            headerShown: false,
-            swipeEnabled: false,
-          }}
-        />
+    <Drawer.Navigator
+      initialRouteName="HomeScreen"
+      drawerContent={(props) => (
+        <DrawerContentScrollView {...props}>
+          <DrawerItemList {...props} />
+          <DrawerItem
+            label="Cerrar sesión"
+            labelStyle={{ color: 'red', fontWeight: 'bold' }}
+            onPress={() => handleLogout(props.navigation)}
+          />
+        </DrawerContentScrollView>
+      )}
+    >
+      <Drawer.Screen name="HomeScreen" component={HomeScreen} />
+      <Drawer.Screen name="Ingredientes" component={IngredientScreen} />
+      <Drawer.Screen name="Tortas" component={TortasScreen} />
+      <Drawer.Screen name="Recetas" component={RecetaScreen} />
+      <Drawer.Screen name="Ventas" component={VentaScreen} />
+    </Drawer.Navigator>
+  );
+};
 
-      </Drawer.Navigator>
+const Navigation = () => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {isAuthenticated ? (
+          <Stack.Screen name="Main" component={MainDrawer} />
+        ) : (
+          <Stack.Screen name="Auth" component={AuthStack} />
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

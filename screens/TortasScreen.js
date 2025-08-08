@@ -247,14 +247,6 @@ export default function TortaScreen() {
             <Card style={[styles.card, tStyles.cardMargin]}>
               <Card.Content>
                 <View style={tStyles.cardRow}>
-                  {item.imagen ? (
-                    <Image
-                      source={{ uri: `${API_URL}/${item.imagen}` }}
-                      style={tStyles.listThumbnail}
-                    />
-                  ) : (
-                    <View style={tStyles.listThumbnail} />
-                  )}
                   <View style={tStyles.flex1}>
                     <Text style={styles.cardTitle}>{item.nombre_torta}</Text>
                     <Text style={styles.cardText}>{item.descripcion_torta}</Text>

@@ -11,6 +11,7 @@ import {
 import { Card, Portal, Dialog, TextInput, Button } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import styles, { ingredientStyles as ingStyles } from '../components/styles';
+import CreateIngredientModal from '../components/CreateIngredientModal';
 import {
   fetchIngredientes,
   agregarIngrediente,
@@ -157,128 +158,11 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
   );
 });
 
-const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave }) => {
-  const [local, setLocal] = useState({
-    nombre: '',
-    unidad_Medida: '',
-    tamano_Paquete: '',
-    costo: '',
-    CantidadStock: '',
-  });
-
-  useEffect(() => {
-    if (visible) {
-      setLocal({ nombre: '', unidad_Medida: '', tamano_Paquete: '', costo: '', CantidadStock: '' });
-    }
-  }, [visible]);
-
-  const handleChange = useCallback((f, v) => {
-    setLocal(p => ({ ...p, [f]: v }));
-  }, []);
-
-  return (
-    <Portal>
-      <Dialog
-        visible={visible}
-        onDismiss={onDismiss}
-        style={ingStyles.dialog}
-      >
-        <View style={[styles.modalHeader, ingStyles.modalHeaderMargin]}>
-          <Text style={styles.modalTitle}>Agregar Ingrediente</Text>
-          <Pressable onPress={onDismiss} hitSlop={10}>
-            <Ionicons name="close-circle" size={24} color="#666" />
-          </Pressable>
-        </View>
-        <Dialog.Content>
-          <FieldLabel>Nombre</FieldLabel>
-          <TextInput
-            mode="outlined"
-            placeholder="Ej. Azúcar"
-            value={local.nombre}
-            onChangeText={t => handleChange('nombre', t)}
-            style={[styles.input, ingStyles.mb12]}
-          />
-
-          <FieldLabel>Unidad de medida</FieldLabel>
-          <TextInput
-            mode="outlined"
-            placeholder="Ej. Kilos"
-            value={local.unidad_Medida}
-            onChangeText={t => handleChange('unidad_Medida', t)}
-            style={[styles.input, ingStyles.mb12]}
-          />
-
-          <FieldLabel>Tamaño paquete</FieldLabel>
-          <TextInput
-            mode="outlined"
-            placeholder="Ej. 200"
-            keyboardType="numeric"
-            value={local.tamano_Paquete}
-            onChangeText={t => handleChange('tamano_Paquete', t)}
-            style={[styles.input, ingStyles.mb12]}
-          />
-
-          <FieldLabel>Precio / paquete</FieldLabel>
-          <TextInput
-            mode="outlined"
-            placeholder="Ej. 120.00"
-            keyboardType="numeric"
-            value={local.costo}
-            onChangeText={t => handleChange('costo', t)}
-            style={[styles.input, ingStyles.mb12]}
-          />
-
-          <FieldLabel>Stock disponible</FieldLabel>
-          <TextInput
-            mode="outlined"
-            placeholder="Ej. 10"
-            keyboardType="numeric"
-            value={local.CantidadStock}
-            onChangeText={t => handleChange('CantidadStock', t)}
-            style={[styles.input, ingStyles.mb16]}
-          />
-        </Dialog.Content>
-
-        <Dialog.Actions style={ingStyles.modalActionsEnd}>
-          <Button mode="text" onPress={onDismiss} labelStyle={ingStyles.labelGray}>
-            Cancelar
-          </Button>
-          <Button
-            mode="contained"
-            onPress={() => {
-              if (
-                !local.nombre.trim() ||
-                !local.unidad_Medida.trim() ||
-                !local.tamano_Paquete ||
-                !local.costo ||
-                !local.CantidadStock
-              ) {
-                Alert.alert('Error', 'Todos los campos son obligatorios');
-                return;
-              }
-              onSave({
-                nombre: local.nombre,
-                unidad_Medida: local.unidad_Medida,
-                tamano_Paquete: parseFloat(local.tamano_Paquete),
-                costo: parseFloat(local.costo),
-                CantidadStock: parseInt(local.CantidadStock, 10),
-              });
-            }}
-            style={ingStyles.saveButton}
-          >
-            Guardar
-          </Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
-  );
-});
-
 export default function IngredientScreen() {
   const route = useRoute();
   const navigation = useNavigation();
   const [ingredientes, setIngredientes] = useState([]);
-  const [addVisible, setAddVisible] = useState(false);
+  const [createVisible, setCreateVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState('');
@@ -297,7 +181,7 @@ export default function IngredientScreen() {
   // Si navega desde Recetas con el flag openAdd, mostrar el modal al abrir
   useEffect(() => {
     if (route.params?.openAdd) {
-      setAddVisible(true);
+      setCreateVisible(true);
       navigation.setParams({ openAdd: false });
     }
   }, [route.params]);
@@ -306,9 +190,9 @@ export default function IngredientScreen() {
     i.nombre.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleAdd = async data => {
+  const handleCreate = async data => {
     await agregarIngrediente(data);
-    setAddVisible(false);
+    setCreateVisible(false);
     load();
   };
 
@@ -339,7 +223,7 @@ export default function IngredientScreen() {
 
  <TouchableOpacity
         style={[styles.botonAgregarIngrediente, ingStyles.mb12]}
-        onPress={() => setAddVisible(true)}
+        onPress={() => setCreateVisible(true)}
       >
        
         <Text style={styles.botonAgregarTexto}>Agregar Ingrediente</Text>
@@ -383,10 +267,10 @@ export default function IngredientScreen() {
   contentContainerStyle={{ paddingBottom: 32 }}
 />
 
-      <AddIngredienteModal
-        visible={addVisible}
-        onDismiss={() => setAddVisible(false)}
-        onSave={handleAdd}
+      <CreateIngredientModal
+        visible={createVisible}
+        onDismiss={() => setCreateVisible(false)}
+        onSave={handleCreate}
       />
       <EditIngredienteModal
         visible={editVisible}

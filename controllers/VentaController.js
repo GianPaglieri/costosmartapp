@@ -26,7 +26,12 @@ export const registrarVenta = async (idTorta) => {
     const response = await api.post('ventas', { id_torta: idTorta });
     return response.data;
   } catch (error) {
-    throw error;
+    const message = error?.response?.data?.error || 'No se pudo registrar la venta';
+    const enriched = new Error(message);
+    enriched.code = error?.response?.data?.code;
+    enriched.details = error?.response?.data?.details;
+    enriched.original = error;
+    throw enriched;
   }
 };
 

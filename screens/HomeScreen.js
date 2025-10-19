@@ -103,8 +103,8 @@ export default function HomeScreen({ navigation }) {
       await registrarVenta(tortaId);
       Alert.alert('Éxito', 'Venta registrada');
       await loadAllData();
-    } catch {
-      Alert.alert('Error', 'No se pudo registrar la venta');
+    } catch (error) {
+      mostrarErrorVenta(error);
     } finally {
       setRegistrandoVenta(false);
     }
@@ -152,6 +152,28 @@ export default function HomeScreen({ navigation }) {
       return 'Últimos 7 días';
     }
   }, [gananciasRange]);
+
+  const mostrarErrorVenta = useCallback((error) => {
+    const detalles = Array.isArray(error?.details) ? error.details : [];
+    if (detalles.length > 0) {
+      const detalleTexto = detalles
+        .map((item) => {
+          const nombre = item?.nombre || 'Ingrediente';
+          const disponible = item?.disponible ?? 0;
+          const requerido = item?.requerido ?? 0;
+          const unidad = item?.unidad ? ` ${item.unidad}` : '';
+          return `• ${nombre}: ${disponible}${unidad} disponibles / ${requerido}${unidad} requeridos`;
+        })
+        .join('\n');
+      Alert.alert(
+        'Stock insuficiente',
+        `${error?.message || 'No se pudo registrar la venta'}\n\n${detalleTexto}`
+      );
+      return;
+    }
+
+    Alert.alert('Error', error?.message || 'No se pudo registrar la venta');
+  }, []);
 
   return (
     <View style={styles.container}>

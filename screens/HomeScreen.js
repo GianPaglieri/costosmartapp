@@ -1,17 +1,16 @@
 // HomeScreen.js
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   ScrollView,
   View,
   Text,
-  Dimensions,
-  Modal,
   Pressable,
   Alert,
-  FlatList
+  FlatList,
+  ActivityIndicator
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import styles, { homeStyles } from '../components/styles';
 import {
   obtenerCantidadVentas,
@@ -19,12 +18,13 @@ import {
   registrarVenta,
   obtenerVentas
 } from '../controllers/VentaController';
-import { fetchTortas } from '../controllers/TortaController';
 import { fetchIngredientesMenosStock } from '../controllers/IngredientController';
+import TortaPickerModal from '../components/TortaPickerModal';
 
 export default function HomeScreen({ navigation }) {
   const [ventasCnt, setVentasCnt] = useState(null);
   const [ganancias, setGanancias] = useState(null);
+  const [gananciasRange, setGananciasRange] = useState(null);
   const [ingredientesStock, setIngredientesStock] = useState([]);
   const [loadingVentas, setLoadingVentas] = useState(true);
   const [loadingGanancias, setLoadingGanancias] = useState(true);
@@ -32,10 +32,7 @@ export default function HomeScreen({ navigation }) {
 
   const [top3, setTop3] = useState([]);
 
-  const [modalVentaVisible, setModalVentaVisible] = useState(false);
-  const [tortas, setTortas] = useState([]);
-  const [loadingTortas, setLoadingTortas] = useState(false);
-  const [tortaSel, setTortaSel] = useState('');
+  const [pickerVisible, setPickerVisible] = useState(false);
   const [registrandoVenta, setRegistrandoVenta] = useState(false);
 
   const loadAllData = useCallback(async () => {
@@ -43,14 +40,15 @@ export default function HomeScreen({ navigation }) {
     setLoadingGanancias(true);
     setLoadingStock(true);
     try {
-      const [cnt, sum, stock, ventas] = await Promise.all([
+      const [cnt, gananciasInfo, stock, ventas] = await Promise.all([
         obtenerCantidadVentas(),
         obtenerGanancias(),
         fetchIngredientesMenosStock(),
         obtenerVentas()
       ]);
       setVentasCnt(cnt);
-      setGanancias(sum);
+      setGanancias(gananciasInfo?.total ?? 0);
+      setGananciasRange(gananciasInfo?.rango ?? null);
       setIngredientesStock(stock);
 
       // Top 3 tortas más vendidas
@@ -92,33 +90,68 @@ export default function HomeScreen({ navigation }) {
     }, [loadAllData])
   );
 
-  const abrirVenta = async () => {
-    setModalVentaVisible(true);
-    setLoadingTortas(true);
-    try {
-      setTortas(await fetchTortas());
-    } finally {
-      setLoadingTortas(false);
-    }
-  };
-
-  const confirmarVenta = async () => {
-    if (!tortaSel) {
-      Alert.alert('Error', 'Seleccione una torta');
+  const abrirVenta = () => {
+    if (registrandoVenta) {
       return;
     }
+    setPickerVisible(true);
+  };
+
+  const confirmarVenta = async (tortaId) => {
     setRegistrandoVenta(true);
     try {
-      await registrarVenta(tortaSel);
+      await registrarVenta(tortaId);
       Alert.alert('Éxito', 'Venta registrada');
       await loadAllData();
     } catch {
       Alert.alert('Error', 'No se pudo registrar la venta');
     } finally {
       setRegistrandoVenta(false);
-      setModalVentaVisible(false);
     }
   };
+
+  const manejarSeleccionTorta = (torta) => {
+    setPickerVisible(false);
+    if (!torta || !torta.ID_TORTA) {
+      return;
+    }
+
+    Alert.alert(
+      'Confirmar venta',
+      `Registrar la venta de "${torta.nombre_torta}"?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Confirmar', onPress: () => confirmarVenta(torta.ID_TORTA) }
+      ]
+    );
+  };
+
+  const formatCurrency = useCallback((value) => {
+    const number = Number(value) || 0;
+    try {
+      return new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        maximumFractionDigits: 0
+      }).format(number);
+    } catch {
+      return `$${Math.round(number).toLocaleString('es-AR')}`;
+    }
+  }, []);
+
+  const gananciasPeriodoLabel = useMemo(() => {
+    if (!gananciasRange?.inicio || !gananciasRange?.fin) {
+      return 'Últimos 7 días';
+    }
+    try {
+      const format = new Intl.DateTimeFormat('es-AR', { day: '2-digit', month: '2-digit' });
+      const start = format.format(new Date(gananciasRange.inicio));
+      const end = format.format(new Date(gananciasRange.fin));
+      return `${start} - ${end}`;
+    } catch {
+      return 'Últimos 7 días';
+    }
+  }, [gananciasRange]);
 
   return (
     <View style={styles.container}>
@@ -129,10 +162,10 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.metricasContainer}>
             <View style={styles.metricaCard}>
               <Text style={styles.metricaValor}>
-                {loadingGanancias ? '...' : `$${ganancias}`}
+                {loadingGanancias ? '...' : formatCurrency(ganancias)}
               </Text>
               <Text style={styles.metricaLabel}>Ganancias</Text>
-              <Text style={styles.metricasPeriodo}>Últimos 7 días</Text>
+              <Text style={styles.metricasPeriodo}>{gananciasPeriodoLabel}</Text>
             </View>
             <View style={styles.metricaCard}>
               <Text style={styles.metricaValor}>
@@ -149,11 +182,26 @@ export default function HomeScreen({ navigation }) {
           style={({ pressed }) => [
             styles.boton,
             styles.botonPrimario,
-            { marginVertical: 12, transform: [{ scale: pressed ? 0.98 : 1 }] }
+            {
+              marginVertical: 12,
+              transform: [{ scale: pressed ? 0.98 : 1 }],
+              opacity: registrandoVenta ? 0.7 : 1
+            }
           ]}
           onPress={abrirVenta}
+          disabled={registrandoVenta}
         >
-          <Text style={styles.botonTexto}>Generar Nueva Venta</Text>
+          {registrandoVenta ? (
+            <View style={homeStyles.buttonContent}>
+              <ActivityIndicator color="#fff" size="small" style={{ marginRight: 8 }} />
+              <Text style={styles.botonTexto}>Registrando venta...</Text>
+            </View>
+          ) : (
+            <View style={homeStyles.buttonContent}>
+              <Ionicons name="cart-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
+              <Text style={styles.botonTexto}>Generar Nueva Venta</Text>
+            </View>
+          )}
         </Pressable>
 
         {/* STOCK CRÍTICO */}
@@ -208,45 +256,13 @@ export default function HomeScreen({ navigation }) {
           )}
         </View>
 
-
-        {/* MODAL NUEVA VENTA */}
-        <Modal
-          visible={modalVentaVisible}
-          transparent
-          onRequestClose={() => setModalVentaVisible(false)}
-        >
-          <Pressable style={styles.modalFondo} onPress={() => setModalVentaVisible(false)}>
-            <View style={styles.modalContenido}>
-              <Text style={styles.modalTitulo}>Registrar Venta</Text>
-              {loadingTortas ? (
-                <Text>Cargando tortas...</Text>
-              ) : (
-                <Picker
-                  selectedValue={tortaSel}
-                  onValueChange={setTortaSel}
-                  style={styles.picker}
-                  dropdownIconColor="#007bff"
-                >
-                  <Picker.Item label="Seleccione…" value="" />
-                  {tortas.map(t => (
-                    <Picker.Item key={t.ID_TORTA} label={t.nombre_torta} value={t.ID_TORTA} />
-                  ))}
-                </Picker>
-              )}
-              <Pressable
-                style={[styles.boton, styles.botonPrimario, { marginTop: 16 }]}
-                onPress={confirmarVenta}
-                disabled={registrandoVenta}
-              >
-                <Text style={styles.botonTexto}>
-                  {registrandoVenta ? 'Registrando...' : 'Confirmar'}
-                </Text>
-              </Pressable>
-            </View>
-          </Pressable>
-        </Modal>
-
       </ScrollView>
+      <TortaPickerModal
+        visible={pickerVisible}
+        onDismiss={() => setPickerVisible(false)}
+        onSelect={manejarSeleccionTorta}
+        placeholder="Buscar torta..."
+      />
     </View>
   );
 }

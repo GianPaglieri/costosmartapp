@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Alert } from 'react-native';
+import { View, Text, Alert } from 'react-native';
+import { TextInput as PaperInput, Button, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import UserController from '../controllers/UserController';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,6 +12,7 @@ const LoginScreen = ({ navigation }) => {
   const [contrasena, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const theme = useTheme();
 
   const handleLogin = async () => {
     if (!email || !contrasena) {
@@ -22,7 +24,6 @@ const LoginScreen = ({ navigation }) => {
     try {
       const response = await UserController.loginUser(email, contrasena);
       const success = await login(response.user, response.token);
-      
       if (!success) {
         Alert.alert('Error', 'No se pudo iniciar sesión');
       }
@@ -36,68 +37,51 @@ const LoginScreen = ({ navigation }) => {
   return (
     <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
       <LoadingSpinner visible={loading} message="Iniciando sesión..." />
-      
-      <View style={[styles.card, { width: '90%', maxWidth: 400, padding: 24 }]}>
-        <Text style={[styles.cardTitle, { fontSize: 24, textAlign: 'center', marginBottom: 16 }]}>
+      <View style={[styles.card, { width: '90%', maxWidth: 420, padding: 24 }]}>
+        <Text style={[styles.cardTitle, { fontSize: 24, textAlign: 'center', marginBottom: 16, color: theme.colors.primary }]}>
           Bienvenido
         </Text>
 
-        <Text style={[styles.label, { marginBottom: 4 }]}>Correo electrónico</Text>
-        <TextInput
-          style={[styles.input, { marginBottom: 16 }]}
+        <PaperInput
+          mode="outlined"
+          label="Correo electrónico"
           placeholder="usuario@ejemplo.com"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
           editable={!loading}
+          style={{ marginBottom: 12 }}
         />
 
-        <Text style={[styles.label, { marginBottom: 4 }]}>Contraseña</Text>
-        <TextInput
-          style={[styles.input, { marginBottom: 24 }]}
+        <PaperInput
+          mode="outlined"
+          label="Contraseña"
           placeholder="••••••••"
           secureTextEntry
           value={contrasena}
           onChangeText={setPassword}
           editable={!loading}
+          style={{ marginBottom: 20 }}
         />
 
-        {/* Botón mejorado */}
-        <Pressable
+        <Button
+          mode="contained"
           onPress={handleLogin}
           disabled={loading}
-          style={({ pressed }) => [
-            styles.botonPrimario,
-            {
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              paddingVertical: 14,
-              borderRadius: 12,
-              elevation: 4,             // Android
-              shadowColor: '#000',      // iOS
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              opacity: pressed ? 0.8 : 1,
-            }
-          ]}
+          icon={(props) => <Ionicons name="log-in-outline" size={20} color="#fff" />}
+          contentStyle={{ paddingVertical: 8 }}
         >
-          <Ionicons name="log-in-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.botonTexto}>Iniciar Sesión</Text>
-        </Pressable>
+          Iniciar Sesión
+        </Button>
 
-        <Pressable
+        <Button
           onPress={() => navigation.navigate('Register')}
-          style={{ marginTop: 16, alignSelf: 'center' }}
           disabled={loading}
+          style={{ marginTop: 16, alignSelf: 'center' }}
         >
-          <Text style={styles.seccionLink}>
-            ¿No tienes una cuenta? Regístrate
-          </Text>
-        </Pressable>
+          ¿No tienes una cuenta? Regístrate
+        </Button>
       </View>
     </View>
   );

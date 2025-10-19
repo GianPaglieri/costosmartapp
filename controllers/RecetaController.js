@@ -3,15 +3,22 @@ import api from '../src/services/api';
 
 export const fetchRecetas = async () => {
   try {
-    const response = await sendAuthenticatedRequest('/recetas');
+    const response = await sendAuthenticatedRequest('recetas');
 
-    // Procesar la respuesta agrupada del backend
-    return response.map(receta => ({
-      ...receta,
-      ingredientes: receta.ingredientes.map(ing => ({
-        ...ing,
-        total_cantidad: parseFloat(ing.total_cantidad) || 0
-      }))
+    return response.map((receta) => ({
+      ID_TORTA: receta.idTorta,
+      nombre_torta: receta.nombreTorta,
+      imagen: receta.imagen,
+      costos: {
+        total: Number(receta?.costos?.total ?? 0),
+      },
+      ingredientes: receta.ingredientes.map((ingrediente) => ({
+        ID_INGREDIENTE: ingrediente.idIngrediente,
+        Nombre: ingrediente.nombre,
+        total_cantidad: Number(ingrediente.cantidad ?? 0),
+        unit_cost: Number(ingrediente.unitCost ?? 0),
+        subtotal_cost: Number(ingrediente.subtotalCost ?? 0),
+      })),
     }));
   } catch (error) {
     return [];
@@ -21,7 +28,7 @@ export const fetchRecetas = async () => {
 export const agregarReceta = async (recetaBase) => {
   try {
     const token = await UserController.getToken();
-    const response = await api.post('/tortas', recetaBase, {
+    const response = await api.post('tortas', recetaBase, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -37,7 +44,7 @@ export const agregarIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantidad) => 
   try {
     const token = await UserController.getToken();
     const response = await api.post(
-      '/recetas/nueva-relacion',
+      'recetas/nueva-relacion',
       { ID_TORTA, ID_INGREDIENTE, cantidad },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -72,7 +79,7 @@ export const editarCantidadIngrediente = async (ID_TORTA, ID_INGREDIENTE, cantid
     const token = await UserController.getToken();
 
     const response = await api.put(
-      `/recetas/${ID_TORTA}/${ID_INGREDIENTE}`,
+      `recetas/${ID_TORTA}/${ID_INGREDIENTE}`,
       { total_cantidad: cantidad },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -93,7 +100,7 @@ export const eliminarIngrediente = async (ID_TORTA, ID_INGREDIENTE) => {
   try {
     const token = await UserController.getToken();
     const response = await api.delete(
-      `/recetas/${ID_TORTA}/${ID_INGREDIENTE}`,
+      `recetas/${ID_TORTA}/${ID_INGREDIENTE}`,
       { headers: { 'Authorization': `Bearer ${token}` } }
     );
 
@@ -113,7 +120,7 @@ export const borrarReceta = async (ID_TORTA) => {
   try {
     const token = await UserController.getToken();
     const response = await api.delete(
-      `/recetas/${ID_TORTA}`,
+      `recetas/${ID_TORTA}`,
       { headers: { 'Authorization': `Bearer ${token}` } }
     );
 

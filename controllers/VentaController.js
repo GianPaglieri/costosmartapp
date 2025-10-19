@@ -1,25 +1,29 @@
 import api from '../src/services/api';
-import UserController, { sendAuthenticatedRequest } from './UserController';
+import { sendAuthenticatedRequest } from './UserController';
 
+const toNumber = (v) => {
+  if (typeof v === 'number') return v;
+  if (typeof v === 'string') {
+    const n = parseFloat(v.replace('%', '').replace(',', '.'));
+    return Number.isNaN(n) ? 0 : n;
+  }
+  return 0;
+};
+
+const toArray = (v) => (Array.isArray(v) ? v : (Array.isArray(v?.data) ? v.data : []));
 
 export const obtenerVentas = async () => {
   try {
-      const ventas = await sendAuthenticatedRequest('/ventas');
-
-      return ventas;
+    const ventas = await sendAuthenticatedRequest('ventas');
+    return toArray(ventas);
   } catch (error) {
-      throw error;
+    throw error;
   }
 };
 
 export const registrarVenta = async (idTorta) => {
   try {
-    const token = await UserController.getToken();
-    const response = await api.post('/ventas', { id_torta: idTorta }, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.post('ventas', { id_torta: idTorta });
     return response.data;
   } catch (error) {
     throw error;
@@ -27,29 +31,27 @@ export const registrarVenta = async (idTorta) => {
 };
 
 export const obtenerCantidadVentas = async () => {
-    try {
-      const response = await sendAuthenticatedRequest('/ventas/cantidad');
-      const cantidadVentas = response?.cantidadVentas;
-
-      if (cantidadVentas === undefined) {
-        throw new Error('La propiedad "cantidadVentas" no está definida en la respuesta');
-      }
-
-      return cantidadVentas;
-    } catch (error) {
-      throw error;
-    }
-  };
+  try {
+    const response = await sendAuthenticatedRequest('ventas/cantidad');
+    const val = response?.cantidadVentas ?? response?.cantidad ?? response ?? 0;
+    return typeof val === 'number' ? val : Number(val) || 0;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const obtenerGanancias = async () => {
   try {
-    const response = await sendAuthenticatedRequest('/ventas/ganancias');
-    const ganancias = response?.ganancias;
-    if (ganancias === undefined) {
-      throw new Error('La propiedad "ganancias" no está definida en la respuesta');
-    }
-
-    return ganancias;
+    const response = await sendAuthenticatedRequest('ventas/ganancias');
+    const raw = response?.ganancias ?? response?.total ?? response ?? 0;
+    const total = typeof raw === 'number' ? raw : Number(raw) || 0;
+    const rango = response?.rango;
+    return {
+      total,
+      rango: rango && rango.inicio && rango.fin
+        ? { inicio: rango.inicio, fin: rango.fin }
+        : null
+    };
   } catch (error) {
     throw error;
   }
@@ -57,14 +59,9 @@ export const obtenerGanancias = async () => {
 
 export const obtenerCantidadVentasSemanales = async () => {
   try {
-    const response = await sendAuthenticatedRequest('/ventas/cantidad-semana');
-    const cantidadVentasSemana = response?.cantidadVentasSemana;
-
-    if (cantidadVentasSemana === undefined) {
-      throw new Error('La propiedad "cantidadVentasSemana" no está definida en la respuesta');
-    }
-
-    return cantidadVentasSemana;
+    const response = await sendAuthenticatedRequest('ventas/cantidad-semana');
+    const val = response?.cantidadVentasSemana ?? response?.cantidadVentas ?? response?.cantidad ?? response ?? 0;
+    return typeof val === 'number' ? val : Number(val) || 0;
   } catch (error) {
     throw error;
   }
@@ -72,14 +69,11 @@ export const obtenerCantidadVentasSemanales = async () => {
 
 export const obtenerPorcentajeVentas = async () => {
   try {
-    const response = await sendAuthenticatedRequest('/ventas/porcentaje-ventas');
-    const porcentajeVentas = response?.porcentajeCambio;
-
-    if (porcentajeVentas === undefined) {
-      throw new Error('La propiedad "porcentajeCambio" no está definida en la respuesta');
-    }
-
-    return porcentajeVentas;
+    const response = await sendAuthenticatedRequest('ventas/porcentaje-ventas');
+    const raw = response?.porcentajeCambio ?? response?.porcentaje ?? response ?? 0;
+    if (typeof raw === 'number') return raw;
+    if (typeof raw === 'string') return toNumber(raw);
+    return 0;
   } catch (error) {
     throw error;
   }

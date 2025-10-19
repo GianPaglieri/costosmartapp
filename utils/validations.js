@@ -30,11 +30,13 @@ export const validateStock = (stock) => {
 };
 
 export const formatCurrency = (amount) => {
+  const n = Math.round(Number(amount) || 0);
   return new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
-    minimumFractionDigits: 2
-  }).format(amount);
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(n);
 };
 
 export const formatDate = (date) => {

@@ -29,6 +29,21 @@ import {
   agregarIngrediente
 } from '../controllers/RecetaController';
 
+const formatCurrency = (value) => {
+  if (value === undefined || value === null) {
+    return '$ 0';
+  }
+  const number = typeof value === 'number' ? value : parseFloat(String(value).replace(',', '.'));
+  if (Number.isNaN(number)) {
+    return '$ 0';
+  }
+  try {
+    return `$ ${new Intl.NumberFormat('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.round(number))}`;
+  } catch (error) {
+    return `$ ${Math.round(number).toFixed(0)}`;
+  }
+};
+
 const RecetasScreen = ({ navigation }) => {
    const route = useRoute();
   const [modalVisible, setModalVisible] = useState(false);
@@ -39,7 +54,8 @@ const RecetasScreen = ({ navigation }) => {
     descripcion: '',
     imagen: '',
     ingredientes: [],
-    ingredientesOriginales: []
+    ingredientesOriginales: [],
+    costo_total: 0
   });
   const [loading, setLoading] = useState(false);
 
@@ -74,7 +90,13 @@ const RecetasScreen = ({ navigation }) => {
   // Función para obtener el precio por ID de receta (torta)
   const obtenerPrecioPorIdTorta = (ID_TORTA) => {
     const precioEncontrado = precios.find(precio => precio.id_torta === ID_TORTA);
-    return precioEncontrado ? `$${precioEncontrado.costo_total}` : 'Precio no disponible';
+    if (!precioEncontrado) {
+      return 'Precio no disponible';
+    }
+    const costo = parseFloat(String(precioEncontrado.costo_total ?? 0)) || 0;
+    const precioLista = parseFloat(String(precioEncontrado.precio_lista ?? precioEncontrado.costo_total ?? 0)) || costo;
+    return `Costo: ${formatCurrency(costo)}
+Precio lista: ${formatCurrency(precioLista)}`;
   };
 
   const ingredientesDisponibles = ingredientes
@@ -158,7 +180,8 @@ const RecetasScreen = ({ navigation }) => {
       ingredientesOriginales: receta.ingredientes.map(ing => ({
         ...ing,
         total_cantidad: ing.total_cantidad.toString()
-      }))
+      })),
+      costo_total: Number(receta?.costos?.total ?? 0)
     });
     setModalVisible(true);
   };
@@ -197,10 +220,16 @@ const RecetasScreen = ({ navigation }) => {
 
       setLoading(true);
 
+      const tamanoPaquete = Number(nuevoIngrediente.tamano_Paquete || 0) || 1;
+      const costoPaquete = Number(nuevoIngrediente.costo || 0) || 0;
+      const unitCost = tamanoPaquete === 0 ? 0 : costoPaquete / tamanoPaquete;
+
       const nuevoIng = {
         ID_INGREDIENTE: nuevoIngrediente.id,
         total_cantidad: cantidad.toString(),
-        Nombre: nuevoIngrediente.nombre
+        Nombre: nuevoIngrediente.nombre,
+        unit_cost: unitCost,
+        subtotal_cost: unitCost * cantidad
       };
       setFormData(prev => ({
         ...prev,
@@ -317,66 +346,119 @@ const RecetasScreen = ({ navigation }) => {
     );
   };
 
-  // Contenido del modal repartido en tres secciones:
-  // 1. Header con título (nombre de la receta o "Nueva Receta") y botón de cerrar
-  // 2. Área con botón "Agregar Ingrediente" y listado scrollable de ingredientes
-  // 3. Footer con botones "Cancelar" y "Guardar"
-const renderModalContent = () => (
+// Contenido del modal repartido en tres secciones:
+// 1. Header con título (nombre de la receta o "Nueva Receta") y botón de cerrar
+// 2. Área con botón "Agregar Ingrediente" y listado scrollable de ingredientes
+// 3. Footer con botones "Cancelar" y "Guardar"
+const renderModalContent = () => {
+  const costoEstimado = formData.ingredientes.reduce((acc, ing) => {
+    const unitCost = Number(ing.unit_cost ?? 0);
+    const cantidad = Number(ing.total_cantidad ?? 0);
+    if (Number.isNaN(unitCost) || Number.isNaN(cantidad)) {
+      return acc;
+    }
+    return acc + unitCost * cantidad;
+  }, 0);
+
+  const costoGuardado = Number(formData.costo_total ?? 0);
+  const diferenciaCosto = costoEstimado - costoGuardado;
+  const mostrarCostoPrevio = Boolean(formData.ID_TORTA);
+
+  const estiloDiferencia =
+    diferenciaCosto > 0
+      ? styles.costoAumento
+      : diferenciaCosto < 0
+      ? styles.costoReduccion
+      : styles.costoNeutro;
+
+  return (
     <View style={{ height: modalMaxHeight, backgroundColor: '#fff' }}>
       {/* Área con botón "Agregar Ingrediente" y listado */}
       <View style={{ flex: 1 }}>
-        <View style={{ paddingHorizontal: 16, paddingVertical: 8, borderBottomWidth: 1, borderColor: '#e0e0e0' }}>
+        <View style={styles.encabezadoIngredientes}>
           {!formData.ID_TORTA && (
             <>
               <TextInput
                 style={[styles.input, { backgroundColor: '#fff' }]}
                 placeholder="Nombre de la torta *"
                 value={formData.nombre_torta}
-                onChangeText={text => setFormData(prev => ({ ...prev, nombre_torta: text }))}
+                onChangeText={(text) => setFormData((prev) => ({ ...prev, nombre_torta: text }))}
                 editable={!loading}
               />
               <Text style={styles.seccionTitulo}>Ingredientes</Text>
             </>
           )}
-          <Pressable
-            style={[styles.boton, { backgroundColor: '#007bff', padding: 10, borderRadius: 8, alignItems: 'center', marginTop: 8 }]}
-            onPress={() => setIngredienteModalVisible(true)}
-          >
-            <Text style={[styles.botonTexto, { color: '#fff' }]}>Agregar Ingrediente</Text>
-          </Pressable>
+          <View style={styles.agregarIngredienteRow}>
+            <Pressable
+              style={styles.agregarIngredienteBoton}
+              onPress={() => setIngredienteModalVisible(true)}
+            >
+              <Ionicons name="add-circle-outline" size={24} color="#2563eb" />
+              <Text style={styles.agregarIngredienteTexto}>Agregar</Text>
+            </Pressable>
+            <Text style={styles.agregarIngredienteHint}>Busca y suma ingredientes rápidamente</Text>
+          </View>
+
         </View>
         {/* Listado de ingredientes */}
-        <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 8 }} contentContainerStyle={{ paddingBottom: 8 }}>
-          <View style={{ borderWidth: 1, borderColor: '#e0e0e0', borderRadius: 10, overflow: 'hidden' }}>
-            {formData.ingredientes.length > 0 ? (
-              <View style={{ padding: 10 }}>
-                {formData.ingredientes.map(ing => (
-                  <View key={ing.ID_INGREDIENTE.toString()}>
-                    {renderIngredienteItem({ item: ing })}
-                  </View>
-                ))}
+        <ScrollView
+          style={{ flex: 1, paddingHorizontal: 16, paddingBottom: 0 }}
+          contentContainerStyle={styles.ingredientesScrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {formData.ingredientes.length > 0 ? (
+            formData.ingredientes.map((ing) => (
+              <View key={ing.ID_INGREDIENTE.toString()} style={styles.ingredienteItemWrapper}>
+                {renderIngredienteItem({ item: ing })}
               </View>
-            ) : (
-              <Text style={[styles.cardText, { textAlign: 'center', marginVertical: 10 }]}>
-                No hay ingredientes agregados
-              </Text>
-            )}
-          </View>
+            ))
+          ) : (
+            <Text style={[styles.cardText, { textAlign: 'center', marginVertical: 10 }]}>
+              No hay ingredientes agregados
+            </Text>
+          )}
         </ScrollView>
       </View>
       {/* Footer */}
       <View style={{ marginBottom: 12 }}>
-  {formData.ID_TORTA && (
-    <Pressable
-      style={[styles.boton, { backgroundColor: '#6c757d', padding: 10, borderRadius: 8, alignItems: 'center', marginHorizontal: 8 }]}
-      onPress={handleVerTorta}
-    >
-      <Text style={[styles.botonTexto, { color: '#fff' }]}>Ver Torta</Text>
-    </Pressable>
-  )}
-</View>
+        {formData.ID_TORTA && (
+          <Pressable
+            style={[
+              styles.botonCompacto,
+              styles.botonVerTorta,
+              { marginHorizontal: 6, marginBottom: 8 },
+            ]}
+            onPress={handleVerTorta}
+          >
+            <Text style={styles.botonVerTortaTexto}>Ver torta</Text>
+          </Pressable>
+        )}
 
-      <View style={{ padding: 16, borderTopWidth: 1, borderColor: '#e0e0e0', justifyContent: 'center' }}>
+        {formData.ingredientes.length > 0 && (
+          <View style={[styles.resumenCostosWrapper, { marginHorizontal: 8 }]}>
+            <View style={styles.resumenCostosFila}>
+              <Text style={styles.resumenEtiqueta}>Costo estimado</Text>
+              <Text style={styles.resumenValor}>{formatCurrency(costoEstimado)}</Text>
+            </View>
+            {mostrarCostoPrevio && (
+              <>
+                <View style={styles.resumenCostosFila}>
+                  <Text style={styles.resumenEtiqueta}>Costo guardado</Text>
+                  <Text style={styles.resumenValorSecundario}>{formatCurrency(costoGuardado)}</Text>
+                </View>
+                <View style={styles.resumenCostosFila}>
+                  <Text style={styles.resumenEtiqueta}>Diferencia estimada</Text>
+                  <Text style={[styles.resumenValorDiferencia, estiloDiferencia]}>
+                    {formatCurrency(diferenciaCosto)}
+                  </Text>
+                </View>
+              </>
+            )}
+          </View>
+        )}
+      </View>
+
+      <View style={{ padding: 16, paddingTop: 12, borderTopWidth: 1, borderColor: '#e0e0e0', justifyContent: 'center' }}>
         <View style={styles.modalBotones}>
           <Pressable style={[styles.boton, { marginHorizontal: 8 }]} onPress={handleCerrarModal}>
             <Text style={styles.botonTexto}>Cancelar</Text>
@@ -386,16 +468,13 @@ const renderModalContent = () => (
             onPress={handleSaveReceta}
             disabled={loading}
           >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.botonTexto}>Guardar</Text>
-            )}
+            {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.botonTexto}>Guardar</Text>}
           </Pressable>
         </View>
       </View>
     </View>
-);
+  );
+};
 
   const renderRecetaItem = ({ item }) => (
     <View style={styles.card}>
@@ -458,13 +537,13 @@ const renderModalContent = () => (
               }
             ]}
           >
-            {/* Header con título y botón de cerrar */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderColor: '#e0e0e0' }}>
-              <Text style={[styles.modalTitle, { fontSize: 20, fontWeight: 'bold', flex: 1 }]}>
-                {formData.ID_TORTA ? `Editar  ${formData.nombre_torta}` : 'Nueva Receta'}
+            {/* Header con título centrado y cruz en la esquina superior derecha */}
+            <View style={[styles.modalHeader, { position: 'relative', paddingTop: 18, paddingBottom: 8 }] }>
+              <Text style={[styles.modalTitle, { flex: 1, textAlign: 'center', fontSize: 18 }]}>
+                {formData.ID_TORTA ? formData.nombre_torta : 'Nueva Receta'}
               </Text>
-              <Pressable onPress={handleCerrarModal} hitSlop={10}>
-                <Text style={[styles.cerrarModal, { fontSize: 24 }]}>✕</Text>
+              <Pressable onPress={handleCerrarModal} hitSlop={10} style={{ position: 'absolute', right: 12, top: 12 }}>
+                <Ionicons name="close" size={20} color="#666" />
               </Pressable>
             </View>
             {renderModalContent()}

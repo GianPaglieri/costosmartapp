@@ -3,9 +3,19 @@ import Constants from 'expo-constants';
 import * as SecureStore from 'expo-secure-store';
 
 export const API_URL = Constants.expoConfig?.extra?.API_URL;
+if (!API_URL) {
+  // Aviso en desarrollo si falta la URL
+  console.warn('API_URL no está definido en la configuración de Expo (extra.API_URL). Revisa app.config.js/app.json.');
+}
+
+// Normalizamos baseURL para que termine en '/'.
+// Esto evita que al resolver rutas relativas se reemplace el último segmento (p.ej. '.../api' -> '.../login').
+const AXIOS_BASE_URL = typeof API_URL === 'string'
+  ? (API_URL.endsWith('/') ? API_URL : API_URL + '/')
+  : API_URL;
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: AXIOS_BASE_URL,
   timeout: 10000, // 10 segundos
   headers: {
     'Content-Type': 'application/json',
@@ -19,6 +29,16 @@ api.interceptors.request.use(
       const token = await SecureStore.getItemAsync('authToken');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+      }
+      // Debug: mostrar URL final en desarrollo
+      if (__DEV__) {
+        try {
+          const fullUrl = new URL(config.url || '', config.baseURL || undefined).toString();
+          // Evitar loggear contraseñas u otros datos sensibles
+          console.log('[API]', (config.method || 'get').toUpperCase(), fullUrl);
+        } catch (_e) {
+          console.log('[API]', (config.method || 'get').toUpperCase(), config.baseURL, config.url);
+        }
       }
     } catch (error) {
       console.warn('Error getting auth token:', error);
@@ -47,8 +67,12 @@ api.interceptors.response.use(
         // Por ahora, simplemente eliminamos el token
         await SecureStore.deleteItemAsync('authToken');
         
-        // Redirigir al login (esto requeriría un contexto global)
-        console.log('Token expirado, redirigir al login');
+        // Intentar forzar logout si el contexto lo expuso globalmente
+        if (typeof globalThis !== 'undefined' && typeof globalThis.__forceLogout === 'function') {
+          globalThis.__forceLogout();
+        } else {
+          console.log('Token expirado, redirigir al login');
+        }
       } catch (refreshError) {
         console.error('Error refreshing token:', refreshError);
       }

@@ -2,9 +2,11 @@ import 'dotenv/config';
 
 export default ({ config }) => ({
   ...config,
+  scheme: 'costosmart',
   extra: {
     ...config.extra,
-    API_URL: process.env.API_URL || 'http://localhost:3000/api',
+    API_URL: 'http://149.50.131.253/api',
+    WEB_BASE_URL: 'https://tusitio.com',
   },
   android: {
     ...config.android,

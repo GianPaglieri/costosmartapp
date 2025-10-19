@@ -1,11 +1,12 @@
 import { StyleSheet } from 'react-native';
+import { colors, spacing, radii } from '../src/theme/tokens';
 
 const styles = StyleSheet.create({
   // Contenedor general
   container: {
     flex: 1,
-    backgroundColor: '#fafafa',
-    paddingHorizontal: 16,
+    backgroundColor: colors.background,
+    paddingHorizontal: spacing.lg,
   },
   scrollContainer: {
     padding: 5,
@@ -18,13 +19,13 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontSize: 28,
     fontFamily: 'Roboto-Bold',
-    color: '#1a1a1a',
+    color: colors.text,
     marginBottom: 4,
     textAlign: 'center',
   },
   heroSubtitle: {
     fontSize: 16,
-    color: '#666',
+    color: colors.textMuted,
     marginBottom: 20,
   },
 
@@ -37,11 +38,11 @@ const styles = StyleSheet.create({
 
   // Ingredientes Card
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    marginBottom: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    marginBottom: spacing.lg,
     elevation: 2,
-    padding: 16,
+    padding: spacing.lg,
   },
   cardTitle: {
     fontSize: 20,
@@ -51,7 +52,7 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 14,
-    color: '#666',
+    color: colors.textMuted,
     marginTop: 4,
   },
   cardImage: {
@@ -63,12 +64,12 @@ const styles = StyleSheet.create({
   // Botones generales
   boton: {
     borderRadius: 10,
-    padding: 16,
+    padding: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   botonPrimario: {
-    backgroundColor: '#007bff',
+    backgroundColor: colors.primary,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -76,15 +77,15 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   botonSecundario: {
-    backgroundColor: '#007bff',
+    backgroundColor: colors.secondary,
   },
   botonTexto: {
-    color: '#fff',
+    color: colors.white,
     fontSize: 16,
     fontFamily: 'Roboto-Medium',
   },
   botonSecundarioTexto: {
-    color: '#007bff',
+    color: colors.primary,
     fontSize: 16,
     fontFamily: 'Roboto-Medium',
   },
@@ -98,8 +99,8 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
+    borderColor: colors.border,
+    borderRadius: radii.sm,
     overflow: 'hidden',
   },
   modalContentScroll: {
@@ -115,9 +116,9 @@ const styles = StyleSheet.create({
   },
   // Aumentamos el ancho máximo para que el modal sea más amplio
   modalContenido: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radii.md,
+    padding: spacing.lg,
     width: '90%',
     maxWidth: 500,
     alignSelf: 'center',
@@ -148,17 +149,24 @@ const styles = StyleSheet.create({
   
   // Estilo para el label de los botones del modal
   modalButtonLabel: {
-    color: '#fff',
+    color: colors.white,
     fontSize: 14,
     fontFamily: 'Roboto-Medium',
     textAlign: 'center',
+  },
+  botonCompacto: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   // Colores específicos para botones del modal
   cancelButton: {
     backgroundColor: '#d3d3d3',
   },
   saveButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: colors.primary,
   },
   deleteButton: {
     backgroundColor: '#ff6b6b',
@@ -166,35 +174,55 @@ const styles = StyleSheet.create({
 
   // Input Fields – estilo outlined simplificado
   input: {
-    paddingHorizontal: 12,
+  paddingHorizontal: 6,
     paddingVertical: 3,
     fontSize: 15,
     fontFamily: 'Roboto-Medium',
-    color: '#007bff',
+    color: colors.primary,
     marginBottom:4,
   },
 
   // Botón para agregar ingrediente
-  botonAgregarIngrediente: {
-    backgroundColor: '#007bff',
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+  agregarIngredienteRow: {
     flexDirection: 'row',
-    gap: 8,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    marginBottom: 16,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: 12,
+    marginTop: 4,
   },
-  botonAgregarTexto: {
+  agregarIngredienteBoton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    backgroundColor: '#e0f2fe',
+  },
+  agregarIngredienteTexto: {
+    marginLeft: 6,
+    fontSize: 14,
+    color: '#1d4ed8',
+    fontWeight: '600',
+  },
+  agregarIngredienteHint: {
+    flexShrink: 1,
+    fontSize: 12,
+    color: '#64748b',
+  },
+  botonVerTorta: {
+    backgroundColor: '#6c757d',
+  },
+  botonVerTortaTexto: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Roboto-Medium',
+  },
+  encabezadoIngredientes: {
+    paddingHorizontal: 16,
+    paddingTop: 6,
+    paddingBottom: 4,
+    borderBottomWidth: 1,
+    borderColor: '#e0e0e0',
   },
 
   // Stock Items
@@ -217,10 +245,10 @@ const styles = StyleSheet.create({
 
   // Secciones
   seccion: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    marginVertical: 10,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    padding: spacing.lg + 4,
+    marginVertical: spacing.sm + 2,
     elevation: 1,
   },
   seccionHeader: {
@@ -232,16 +260,16 @@ const styles = StyleSheet.create({
   seccionTitulo: {
     fontSize: 18,
     fontFamily: 'Roboto-Bold',
-    color: '#1a1a1a',
+    color: colors.text,
   },
   seccionLink: {
-    color: '#007bff',
+    color: colors.primary,
     fontSize: 14,
     fontWeight: '500',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 8,
-    backgroundColor: '#007bff10',
+    borderRadius: radii.sm,
+    backgroundColor: '#1976d220',
   },
 
   // Searchbar
@@ -270,14 +298,15 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   metricaValor: {
-    fontSize: 22,
+    fontSize: 16,
     fontFamily: 'Roboto-Bold',
-    color: '#007bff',
+    color: colors.primary,
     marginBottom: 4,
+    lineHeight: 20,
   },
   metricaLabel: {
-    fontSize: 15,
-    color: '#444',
+    fontSize: 13,
+    color: colors.textMuted,
     marginBottom: 2,
   },
   metricasPeriodo: {
@@ -313,26 +342,120 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   ingredienteItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
     borderBottomWidth: 1,
     borderBottomColor: '#f5f5f5',
   },
+  ingredienteHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  ingredienteMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  ingredienteCostosRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  ingredienteCostoLabel: {
+    fontSize: 11,
+    color: '#6b7280',
+  },
+  ingredienteCostoValor: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  ingredienteCostoSubtotal: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0369a1',
+  },
+  ingredienteCantidadWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   ingredienteNombre: {
-    fontSize: 16,
+    fontSize: 15,
     flex: 1,
     marginRight: 10,
+    color: '#111827',
+    fontWeight: '600',
   },
   cantidadInput: {
-    width: 80,
+    width: 90,
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
     padding: 8,
     textAlign: 'center',
+    backgroundColor: '#fff',
+  },
+  resumenCostosWrapper: {
+    marginTop: 12,
+    padding: 12,
+    backgroundColor: '#f8fafc',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  resumenCostosFila: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  resumenEtiqueta: {
+    fontSize: 13,
+    color: '#64748b',
+  },
+  resumenValor: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+  resumenValorSecundario: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#475569',
+  },
+  resumenValorDiferencia: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  costoAumento: {
+    color: '#dc2626',
+  },
+  costoReduccion: {
+    color: '#059669',
+  },
+  costoNeutro: {
+    color: '#475569',
+  },
+  ingredientesScrollContent: {
+    paddingTop: 4,
+    paddingBottom: 12,
+  },
+  ingredienteItemWrapper: {
+    marginBottom: 8,
+    borderRadius: 12,
+    backgroundColor: '#ffffff',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   addButton: {
     flexDirection: 'row',
@@ -380,16 +503,15 @@ const ingredientStyles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 8,
   },
-  modalActionsEnd: {
-    justifyContent: 'flex-end',
-    paddingHorizontal: 8,
+  actionsAlign: {
+    alignItems: 'center',
+    flexWrap: 'wrap',
   },
-  rowCenter: {
+  actionsRight: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  row: {
-    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    flexWrap: 'wrap',
   },
   cardRow: {
     flexDirection: 'row',
@@ -405,6 +527,11 @@ const ingredientStyles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 4,
   },
+  fieldLabel: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginBottom: 6,
+  },
   ingredientUnit: {
     fontSize: 14,
     color: '#555',
@@ -414,13 +541,14 @@ const ingredientStyles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
   },
-  saveButton: {
+  primaryButton: {
     marginLeft: 8,
-    backgroundColor: '#007bff',
   },
-  deleteLabel: {
-    color: '#dc3545',
-    marginLeft: 4,
+  labelGray: {
+    color: '#6b7280',
+  },
+  buttonContent: {
+    paddingHorizontal: 12,
   },
   mb12: {
     marginBottom: 12,
@@ -436,9 +564,6 @@ const ingredientStyles = StyleSheet.create({
   },
   separator: {
     height: 12,
-  },
-  labelGray: {
-    color: '#666',
   },
 });
 
@@ -491,23 +616,27 @@ const tortaStyles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 8,
   },
-  rowCenter: {
+  actionsAlign: {
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  actionsRight: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-  },
-  deleteLabel: {
-    color: '#dc3545',
-    marginLeft: 4,
+    justifyContent: 'flex-end',
+    flexWrap: 'wrap',
   },
   viewRecipeButton: {
-    marginRight: 8,
-    backgroundColor: '#6c757d',
+    marginLeft: 8,
   },
   primaryButton: {
-    backgroundColor: '#007bff',
+    marginLeft: 8,
+  },
+  labelGray: {
+    color: '#6b7280',
+  },
+  buttonContent: {
+    paddingHorizontal: 12,
   },
   cardMargin: {
     marginBottom: 10,
@@ -525,9 +654,6 @@ const tortaStyles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
     marginBottom: 6,
-  },
-  whiteText: {
-    color: '#fff',
   },
 });
 
@@ -564,30 +690,217 @@ const homeStyles = StyleSheet.create({
 });
 
 const ventaStyles = StyleSheet.create({
+  listContent: {
+    paddingBottom: 56,
+  },
+  headerContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 16,
+  },
+  titleBlock: {
+    marginBottom: 18,
+  },
+  rangeRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 16,
+  },
+  rangeChip: {
+    marginRight: 8,
+    marginBottom: 8,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    backgroundColor: '#fff',
+  },
+  rangeChipActive: {
+    backgroundColor: '#2563eb',
+    borderColor: '#2563eb',
+  },
+  rangeChipText: {
+    color: '#1f2937',
+  },
+  rangeChipTextActive: {
+    color: '#fff',
+  },
+  summaryGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  summaryCard: {
+    width: '48%',
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 1,
+  },
+  summaryCardPrimary: {
+    backgroundColor: '#2563eb',
+    borderColor: '#2563eb',
+    shadowOpacity: 0.12,
+    elevation: 3,
+  },
+  summaryLabel: {
+    fontSize: 12,
+    color: '#6b7280',
+    textTransform: 'uppercase',
+    marginBottom: 8,
+    letterSpacing: 0.6,
+  },
+  summaryLabelOnPrimary: {
+    color: '#e0e7ff',
+  },
+  summaryValue: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  summaryValuePrimary: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  summaryCaption: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginTop: 6,
+  },
+  summaryCaptionOnPrimary: {
+    color: '#dbeafe',
+  },
+  chartContainer: {
+    marginTop: 4,
+  },
+  chartCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  chartTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 4,
+  },
+  chartHint: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginBottom: 12,
+  },
+  recentContainer: {
+    marginTop: 20,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    elevation: 1,
+  },
+  recentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  recentHint: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  recentRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eef1f5',
+  },
+  recentRowLast: {
+    borderBottomWidth: 0,
+  },
+  recentName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  recentMeta: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  recentAmount: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#16a34a',
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    marginTop: 28,
+    marginBottom: 12,
+  },
+  emptyLabel: {
+    fontSize: 13,
+    color: '#6b7280',
+    marginBottom: 16,
+  },
+  emptyHint: {
+    marginTop: 8,
+    color: '#6b7280',
+    textAlign: 'center',
+  },
   card: {
     marginHorizontal: 16,
-    marginVertical: 8,
-    borderRadius: 12,
-    elevation: 2,
+    marginVertical: 10,
+    borderRadius: 16,
     backgroundColor: '#fff',
-    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  cardPressable: {
+  paddingHorizontal: 4,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    padding: 18,
+    paddingRight: 14,
   },
   badgeCount: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#007bff10',
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#e0e7ff',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 14,
   },
   badgeText: {
-    color: '#007bff',
+    color: '#1d4ed8',
     fontSize: 16,
     fontWeight: '700',
   },
@@ -597,38 +910,60 @@ const ventaStyles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
+    color: '#111827',
+    marginBottom: 6,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   subtitle: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 13,
+    color: '#6b7280',
   },
   sum: {
-    color: '#28a745',
+    color: '#16a34a',
     fontWeight: '700',
+  },
+  pill: {
+    backgroundColor: '#eff6ff',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  pillText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#1d4ed8',
   },
   detailContainer: {
     maxHeight: 200,
     borderTopWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#eef1f5',
+    backgroundColor: '#f9fafb',
   },
   detailScroll: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
   },
   detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 6,
+    paddingVertical: 8,
   },
   detailDate: {
     fontSize: 12,
-    color: '#555',
+    color: '#6b7280',
   },
   detailPrice: {
     fontSize: 12,
-    color: '#28a745',
-    fontWeight: '500',
+    color: '#16a34a',
+    fontWeight: '600',
+  },
+  detailDivider: {
+    height: 1,
+    backgroundColor: '#eef1f5',
   },
 });
 

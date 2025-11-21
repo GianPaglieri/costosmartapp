@@ -514,6 +514,15 @@ export default function TortaScreen() {
     }
   }, [route.params, tortas]);
 
+  useEffect(() => {
+    if (route.params?.openAdd) {
+      setAddVisible(true);
+      if (navigation.setParams) {
+        navigation.setParams({ openAdd: false });
+      }
+    }
+  }, [route.params, navigation]);
+
   const handleAdd = async d => {
     const nombre = (d.nombre_torta || '').trim();
     const descripcion = (d.descripcion_torta || '').trim();

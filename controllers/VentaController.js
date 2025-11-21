@@ -39,7 +39,14 @@ export const obtenerCantidadVentas = async () => {
   try {
     const response = await sendAuthenticatedRequest('ventas/cantidad');
     const val = response?.cantidadVentas ?? response?.cantidad ?? response ?? 0;
-    return typeof val === 'number' ? val : Number(val) || 0;
+    const total = typeof val === 'number' ? val : Number(val) || 0;
+    const rango = response?.rango;
+    return {
+      total,
+      rango: rango && rango.inicio && rango.fin
+        ? { inicio: rango.inicio, fin: rango.fin }
+        : null
+    };
   } catch (error) {
     throw error;
   }

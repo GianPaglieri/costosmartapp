@@ -43,63 +43,16 @@ const PRIMARY_BLUE = '#007bff';
 
 const IngredientForm = ({ local, setLocal, touched, setTouched }) => {
   const theme = useTheme();
+  const handleQuickAdjust = (delta) => {
+    setLocal((prev) => {
+      const next = Math.max(0, (Number(prev.CantidadStock) || 0) + delta);
+      return { ...prev, CantidadStock: String(next) };
+    });
+    setTouched((s) => ({ ...s, stock: true }));
+  };
   return (
     <>
-      <Text style={ingStyles.fieldLabel}>Nombre</Text>
-      <TextInput
-        mode="outlined"
-        placeholder="Ej. Harina"
-        value={local.nombre}
-        onChangeText={(t) => setLocal((p) => ({ ...p, nombre: t }))}
-        onBlur={() => setTouched((s) => ({ ...s, nombre: true }))}
-        dense
-        style={[styles.input, ingStyles?.mb12, { backgroundColor: '#fff', height: 44, textAlignVertical: 'center' }]}
-        contentStyle={{ paddingVertical: 2, paddingLeft: 6, paddingRight: 6 }}
-        outlineStyle={{ borderRadius: 10 }}
-      />
-      {touched.nombre && !local.nombre.trim() ? (
-        <HelperText type="error">El nombre es obligatorio</HelperText>
-      ) : null}
-
-      <Text style={ingStyles.fieldLabel}>
-        Unidad
-      </Text>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: -4, marginBottom: 8 }}>
-        {units.map((u) => (
-          <Chip
-            key={u}
-            selected={(local.unidad_Medida || '').toLowerCase() === u}
-            onPress={() => setLocal((p) => ({ ...p, unidad_Medida: u }))}
-            style={{ marginRight: 6, marginBottom: 6 }}
-          >
-            {u}
-          </Chip>
-        ))}
-      </View>
-      {touched.unidad && !local.unidad_Medida.trim() ? (
-        <HelperText type="error">La unidad es obligatoria</HelperText>
-      ) : null}
-
-      <Text style={ingStyles.fieldLabel}>Tamaño del paquete</Text>
-      <TextInput
-        mode="outlined"
-        placeholder="Ej. 500"
-        keyboardType="numeric"
-        value={local.tamano_Paquete}
-        onChangeText={(t) =>
-          setLocal((p) => ({ ...p, tamano_Paquete: t.replace(/[^0-9.,]/g, '').replace(',', '.') }))
-        }
-        onBlur={() => setTouched((s) => ({ ...s, tamano: true }))}
-        dense
-        right={<TextInput.Affix text={`${local.unidad_Medida ? ' ' + local.unidad_Medida : ''}`} />}
-        style={[styles.input, ingStyles?.mb12, { backgroundColor: '#fff', height: 44, textAlignVertical: 'center' }]}
-        contentStyle={{ paddingVertical: 2, paddingLeft: 6, paddingRight: 6 }}
-        outlineStyle={{ borderRadius: 10 }}
-      />
-      {touched.tamano && (!local.tamano_Paquete || Number.isNaN(Number(local.tamano_Paquete))) ? (
-        <HelperText type="error">Ingresa un tamano valido</HelperText>
-      ) : null}
-
+      <Text style={ingStyles.modalSectionLabel}>Actualizacion rapida</Text>
       <Text style={ingStyles.fieldLabel}>Precio / paquete</Text>
       <TextInput
         mode="outlined"
@@ -110,7 +63,7 @@ const IngredientForm = ({ local, setLocal, touched, setTouched }) => {
         onBlur={() => setTouched((s) => ({ ...s, costo: true }))}
         dense
         right={<TextInput.Affix text={local.costo ? ' ARS' : ''} />}
-        style={[styles.input, ingStyles?.mb12, { backgroundColor: '#fff', height: 44, textAlignVertical: 'center' }]}
+        style={[styles.input, ingStyles.mb12, { backgroundColor: '#fff', height: 44, textAlignVertical: 'center' }]}
         contentStyle={{ paddingVertical: 2, paddingLeft: 6, paddingRight: 6 }}
         outlineStyle={{ borderRadius: 10 }}
       />
@@ -128,12 +81,80 @@ const IngredientForm = ({ local, setLocal, touched, setTouched }) => {
         onBlur={() => setTouched((s) => ({ ...s, stock: true }))}
         dense
         right={<TextInput.Affix text={local.CantidadStock ? ' u' : ''} />}
-        style={[styles.input, ingStyles?.mb16, { backgroundColor: '#fff', height: 44, textAlignVertical: 'center' }]}
+        style={[styles.input, { backgroundColor: '#fff', height: 44, textAlignVertical: 'center' }]}
         contentStyle={{ paddingVertical: 2, paddingLeft: 6, paddingRight: 6 }}
         outlineStyle={{ borderRadius: 10 }}
       />
       {touched.stock && (!local.CantidadStock || Number.isNaN(Number(local.CantidadStock))) ? (
         <HelperText type="error">Ingresa una cantidad valida</HelperText>
+      ) : null}
+
+      <View style={ingStyles.quickAdjustRow}>
+        {[1, 5, 10].map((value) => (
+          <Pressable key={value} onPress={() => handleQuickAdjust(value)} style={ingStyles.quickAdjustButton}>
+            <Text style={ingStyles.quickAdjustText}>+{value}</Text>
+          </Pressable>
+        ))}
+        <Pressable
+          onPress={() => handleQuickAdjust(-1)}
+          style={[ingStyles.quickAdjustButton, { backgroundColor: 'rgba(239,68,68,0.15)' }]}
+        >
+          <Text style={[ingStyles.quickAdjustText, { color: '#b91c1c' }]}>-1</Text>
+        </Pressable>
+      </View>
+
+      <Text style={ingStyles.modalSectionLabel}>Datos basicos</Text>
+      <Text style={ingStyles.fieldLabel}>Nombre</Text>
+      <TextInput
+        mode="outlined"
+        placeholder="Ej. Harina"
+        value={local.nombre}
+        onChangeText={(t) => setLocal((p) => ({ ...p, nombre: t }))}
+        onBlur={() => setTouched((s) => ({ ...s, nombre: true }))}
+        dense
+        style={[styles.input, ingStyles.mb12, { backgroundColor: '#fff', height: 44, textAlignVertical: 'center' }]}
+        contentStyle={{ paddingVertical: 2, paddingLeft: 6, paddingRight: 6 }}
+        outlineStyle={{ borderRadius: 10 }}
+      />
+      {touched.nombre && !local.nombre.trim() ? (
+        <HelperText type="error">El nombre es obligatorio</HelperText>
+      ) : null}
+
+      <Text style={ingStyles.fieldLabel}>Unidad</Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: -4, marginBottom: 8 }}>
+        {units.map((u) => (
+          <Chip
+            key={u}
+            selected={(local.unidad_Medida || '').toLowerCase() === u}
+            onPress={() => setLocal((p) => ({ ...p, unidad_Medida: u }))}
+            style={{ marginRight: 6, marginBottom: 6 }}
+          >
+            {u}
+          </Chip>
+        ))}
+      </View>
+      {touched.unidad && !local.unidad_Medida.trim() ? (
+        <HelperText type="error">La unidad es obligatoria</HelperText>
+      ) : null}
+
+      <Text style={ingStyles.fieldLabel}>Tamano del paquete</Text>
+      <TextInput
+        mode="outlined"
+        placeholder="Ej. 500"
+        keyboardType="numeric"
+        value={local.tamano_Paquete}
+        onChangeText={(t) =>
+          setLocal((p) => ({ ...p, tamano_Paquete: t.replace(/[^0-9.,]/g, '').replace(',', '.') }))
+        }
+        onBlur={() => setTouched((s) => ({ ...s, tamano: true }))}
+        dense
+        right={<TextInput.Affix text={`${local.unidad_Medida ? ' ' + local.unidad_Medida : ''}`} />}
+        style={[styles.input, ingStyles.mb12, { backgroundColor: '#fff', height: 44, textAlignVertical: 'center' }]}
+        contentStyle={{ paddingVertical: 2, paddingLeft: 6, paddingRight: 6 }}
+        outlineStyle={{ borderRadius: 10 }}
+      />
+      {touched.tamano && (!local.tamano_Paquete || Number.isNaN(Number(local.tamano_Paquete))) ? (
+        <HelperText type="error">Ingresa un tamano valido</HelperText>
       ) : null}
     </>
   );
@@ -188,6 +209,38 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
             <View style={{ maxHeight: Math.min(screenHeight * 0.7, 520) }}>
               <ScrollView contentContainerStyle={{ paddingBottom: 8 }} showsVerticalScrollIndicator={false}>
+                <View style={ingStyles.modalInfoPreview}>
+                  <View style={ingStyles.modalInfoIcon}>
+                    <Ionicons name="leaf-outline" size={18} color="#0f172a" />
+                  </View>
+                  <View style={ingStyles.modalInfoText}>
+                    <Text style={ingStyles.modalInfoTitle}>{local.nombre || 'Ingrediente'}</Text>
+                    <Text style={ingStyles.modalInfoSubtitle}>
+                      Unidad base: {local.unidad_Medida || 'N/A'}
+                    </Text>
+                  </View>
+                  <View style={ingStyles.modalInfoBadge}>
+                    <Ionicons name="pricetag-outline" size={12} color="#0f172a" />
+                    <Text style={ingStyles.modalInfoBadgeText}>ID {local.id ?? '—'}</Text>
+                  </View>
+                </View>
+                <View style={ingStyles.modalQuickRow}>
+                  <View style={ingStyles.modalQuickCard}>
+                    <Text style={ingStyles.modalQuickLabel}>Costo unitario</Text>
+                    <Text style={ingStyles.modalQuickValue}>${local.costo || '0'}</Text>
+                  </View>
+                  <View
+                    style={[
+                      ingStyles.modalQuickCard,
+                      Number(local.CantidadStock || 0) <= 0 ? ingStyles.modalQuickDanger : ingStyles.modalQuickOk,
+                    ]}
+                  >
+                    <Text style={ingStyles.modalQuickLabel}>Stock disponible</Text>
+                    <Text style={ingStyles.modalQuickValue}>
+                      {local.CantidadStock || '0'} {local.unidad_Medida || 'u'}
+                    </Text>
+                  </View>
+                </View>
                 <IngredientForm local={local} setLocal={setLocal} touched={touched} setTouched={setTouched} />
               </ScrollView>
             </View>
@@ -413,31 +466,40 @@ export default function IngredientScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-        <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.onSurface, flex: 1 }}>Ingredientes</Text>
-        <Chip mode="outlined" style={{ marginRight: 4 }}>{ingredientes.length} total</Chip>
-        <IconButton
-          icon="plus"
-          onPress={() => {
-            setInitialAddName('');
-            setAddVisible(true);
-          }}
-          accessibilityLabel="Agregar ingrediente"
-        />
-        <IconButton
-          icon={searchOpen ? 'close' : 'magnify'}
-          onPress={() => {
-            if (searchOpen) {
-              // closing -> clear filters immediately
-              setSearchRaw('');
-              setSearch('');
-              setSearchOpen(false);
-            } else {
-              setSearchOpen(true);
-            }
-          }}
-          accessibilityLabel="Buscar"
-        />
+      <View style={ingStyles.topBar}>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.onSurface }}>Ingredientes</Text>
+          <Text style={{ fontSize: 12, color: theme.colors.onSurfaceVariant }}>{ingredientes.length} registrados</Text>
+        </View>
+        <View style={ingStyles.topActions}>
+          <IconButton
+            icon={searchOpen ? 'close' : 'magnify'}
+            size={20}
+            style={ingStyles.iconButton}
+            onPress={() => {
+              if (searchOpen) {
+                setSearchRaw('');
+                setSearch('');
+                setSearchOpen(false);
+              } else {
+                setSearchOpen(true);
+              }
+            }}
+            accessibilityLabel="Buscar"
+          />
+          <Button
+            icon="plus"
+            mode="contained"
+            onPress={() => {
+              setInitialAddName('');
+              setAddVisible(true);
+            }}
+            contentStyle={{ flexDirection: 'row-reverse' }}
+            style={{ borderRadius: 999 }}
+          >
+            Nuevo
+          </Button>
+        </View>
       </View>
 
       {searchOpen && (
@@ -467,23 +529,60 @@ export default function IngredientScreen() {
         keyExtractor={(i) => String(i.id)}
         renderItem={({ item }) => {
           const n = Number(item.CantidadStock) || 0;
-          const sevColor = n <= 0 ? '#E53935' : n <= 2 ? '#FB8C00' : 'transparent';
+          const severity = n <= 0 ? 'danger' : n <= 2 ? 'warn' : 'ok';
           return (
-            <Card style={[styles.card, ingStyles?.cardPadding, { borderLeftWidth: 3, borderLeftColor: sevColor === 'transparent' ? '#e6e8f0' : sevColor }]}>
-              <View style={ingStyles?.cardRow || { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <View style={ingStyles?.cardInfo || { flex: 1 }}>
-                  <Text style={ingStyles?.ingredientName || { fontSize: 16, fontWeight: '600', color: theme.colors.onSurface }}>{item.nombre}</Text>
-                  <Text style={{ marginTop: 2, color: theme.colors.onSurfaceVariant, letterSpacing: 0.2 }}>
-                    {item.tamano_Paquete} {item.unidad_Medida} - $ {formatMoney(item.costo)}
+            <Card
+              style={[
+                ingStyles.listCard,
+                {
+                  borderLeftWidth: 3,
+                  borderLeftColor:
+                    severity === 'ok' ? '#e2e8f0' : severity === 'warn' ? '#f59e0b' : '#ef4444',
+                },
+              ]}
+            >
+              <View style={ingStyles.listRow}>
+                <View style={ingStyles.listInfo}>
+                  <Text style={ingStyles.listName}>{item.nombre}</Text>
+                  <Text style={ingStyles.listMeta}>
+                    {item.tamano_Paquete} {item.unidad_Medida} - ${formatMoney(item.costo)}
                   </Text>
                 </View>
-                <View style={{ alignItems: 'flex-end', justifyContent: 'space-between', minWidth: 72 }}>
-                  <Text style={{ fontSize: 11, color: theme.colors.onSurfaceVariant, marginBottom: 2 }}>Stock</Text>
-                  <View style={{ paddingVertical: 6, paddingHorizontal: 10, borderRadius: 10, backgroundColor: sevColor === 'transparent' ? '#f4f6fa' : `${sevColor}14`, marginBottom: 8 }}>
-                    <Text style={{ fontSize: 15, fontWeight: '700', color: sevColor === 'transparent' ? theme.colors.onSurface : sevColor }}>{n} u</Text>
+                <View style={ingStyles.listRight}>
+                  <View
+                    style={[
+                      ingStyles.stockPill,
+                      severity === 'ok'
+                        ? ingStyles.stockPillOk
+                        : severity === 'warn'
+                          ? ingStyles.stockPillWarn
+                          : ingStyles.stockPillDanger,
+                    ]}
+                  >
+                    <Ionicons
+                      name={
+                        severity === 'ok'
+                          ? 'checkmark-circle-outline'
+                          : severity === 'warn'
+                            ? 'alert-circle-outline'
+                            : 'close-circle-outline'
+                      }
+                      size={13}
+                      color={severity === 'ok' ? '#166534' : severity === 'warn' ? '#b45309' : '#b91c1c'}
+                    />
+                    <Text style={ingStyles.stockPillText}>
+                      {n} {item.unidad_Medida || 'u'}
+                    </Text>
                   </View>
-                  <TouchableOpacity onPress={() => { setSelected(item); setEditVisible(true); }} style={styles.editButton}>
-                    <Text style={styles.seccionLink}>Editar</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected(item);
+                      setEditVisible(true);
+                    }}
+                    style={ingStyles.editLink}
+                  >
+                    <Ionicons name="create-outline" size={14} color="#0f172a" />
+                    <Text style={ingStyles.editLinkText}>Editar</Text>
                   </TouchableOpacity>
                 </View>
               </View>

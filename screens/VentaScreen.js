@@ -82,12 +82,18 @@ export default function SalesByCakeScreen() {
       const detalleTexto = detalles
         .map((item) => {
           const nombre = item?.nombre || 'Ingrediente';
-          const disponible = item?.disponible ?? 0;
-          const requerido = item?.requerido ?? 0;
+          const disponible = Number(item?.disponible ?? 0);
+          const requerido = Number(item?.requerido ?? 0);
+          const faltante = Number(item?.faltante ?? Math.max(requerido - disponible, 0));
           const unidad = item?.unidad ? ` ${item.unidad}` : '';
-          return `• ${nombre}: ${disponible}${unidad} disponibles / ${requerido}${unidad} requeridos`;
+          return [
+            `• ${nombre}`,
+            `   Disponible: ${disponible}${unidad}`,
+            `   Necesario: ${requerido}${unidad}`,
+            `   Falta: ${faltante}${unidad}`
+          ].join('\n');
         })
-        .join('\n');
+        .join('\n\n');
       Alert.alert(
         'Stock insuficiente',
         `${error?.message || 'No se pudo registrar la venta'}\n\n${detalleTexto}`

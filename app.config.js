@@ -27,7 +27,7 @@ export default ({ config }) => ({
   splash: {
     image: "./assets/splash.png",
     resizeMode: "contain",
-    backgroundColor: "#ffffff"
+    backgroundColor: "#0f172a"
   },
   assetBundlePatterns: [
     "**/*"
@@ -40,6 +40,7 @@ export default ({ config }) => ({
   },
   plugins: [
     "expo-secure-store",
-    "expo-image-picker"
+    "expo-image-picker",
+    "expo-font"
   ]
 }); 

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, spacing, radii } from '../src/theme/tokens';
+import { colors, spacing, radii, shadows } from '../src/theme/tokens';
 
 const styles = StyleSheet.create({
   // Contenedor general
@@ -7,18 +7,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xl,
   },
   scrollContainer: {
-    padding: 5,
+    padding: spacing.sm,
   },
 
   // Hero Section
   heroSection: {
-    marginBottom: 24,
+    marginBottom: spacing.xl,
+    alignItems: 'center',
   },
   heroTitle: {
     fontSize: 28,
-    fontFamily: 'Roboto-Bold',
+    fontFamily: 'Montserrat-SemiBold',
     color: colors.text,
     marginBottom: 4,
     textAlign: 'center',
@@ -26,14 +28,15 @@ const styles = StyleSheet.create({
   heroSubtitle: {
     fontSize: 16,
     color: colors.textMuted,
-    marginBottom: 20,
+    fontFamily: 'Inter-Medium',
+    marginBottom: spacing.lg,
   },
 
   // Buscador
   searchInput: {
     marginVertical: 10,
-    backgroundColor: '#f8f8f8',
-    
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radii.md,
   },
 
   // Ingredientes Card
@@ -41,13 +44,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radii.lg,
     marginBottom: spacing.lg,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: colors.border,
     padding: spacing.lg,
+    shadowColor: 'rgba(15,23,42,0.1)',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    elevation: shadows.md.elevation,
   },
   cardTitle: {
     fontSize: 20,
-    fontFamily: 'Roboto-Bold',
-    color: '#333',
+    fontFamily: 'Inter-Bold',
+    color: colors.text,
     marginBottom: 8,
   },
   cardText: {
@@ -63,18 +72,19 @@ const styles = StyleSheet.create({
 
   // Botones generales
   boton: {
-    borderRadius: 10,
-    padding: spacing.lg,
+    borderRadius: radii.md,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
     alignItems: 'center',
     justifyContent: 'center',
   },
   botonPrimario: {
     backgroundColor: colors.primary,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    elevation: shadows.md.elevation,
+    shadowColor: 'rgba(15,23,42,0.35)',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
   },
   botonSecundario: {
     backgroundColor: colors.secondary,
@@ -82,12 +92,12 @@ const styles = StyleSheet.create({
   botonTexto: {
     color: colors.white,
     fontSize: 16,
-    fontFamily: 'Roboto-Medium',
+    fontFamily: 'Inter-Medium',
   },
   botonSecundarioTexto: {
     color: colors.primary,
     fontSize: 16,
-    fontFamily: 'Roboto-Medium',
+    fontFamily: 'Inter-Medium',
   },
 
   inputContainer: {
@@ -125,7 +135,7 @@ const styles = StyleSheet.create({
   },
   modalTitulo: {
     fontSize: 20,
-    fontFamily: 'Roboto-Medium',
+    fontFamily: 'Inter-Medium',
     color: '#212121',
     marginBottom: 12,
     textAlign: 'center',
@@ -151,7 +161,7 @@ const styles = StyleSheet.create({
   modalButtonLabel: {
     color: colors.white,
     fontSize: 14,
-    fontFamily: 'Roboto-Medium',
+    fontFamily: 'Inter-Medium',
     textAlign: 'center',
   },
   botonCompacto: {
@@ -177,7 +187,7 @@ const styles = StyleSheet.create({
   paddingHorizontal: 6,
     paddingVertical: 3,
     fontSize: 15,
-    fontFamily: 'Roboto-Medium',
+    fontFamily: 'Inter-Medium',
     color: colors.primary,
     marginBottom:4,
   },
@@ -215,7 +225,7 @@ const styles = StyleSheet.create({
   botonVerTortaTexto: {
     color: '#fff',
     fontSize: 14,
-    fontFamily: 'Roboto-Medium',
+    fontFamily: 'Inter-Medium',
   },
   encabezadoIngredientes: {
     paddingHorizontal: 16,
@@ -240,7 +250,7 @@ const styles = StyleSheet.create({
   itemStockCantidad: {
     fontSize: 15,
     color: '#dc3545',
-    fontFamily: 'Roboto-Bold',
+    fontFamily: 'Inter-Bold',
   },
 
   // Secciones
@@ -249,7 +259,13 @@ const styles = StyleSheet.create({
     borderRadius: radii.lg,
     padding: spacing.lg + 4,
     marginVertical: spacing.sm + 2,
-    elevation: 1,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: 'rgba(15,23,42,0.08)',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 3,
   },
   seccionHeader: {
     flexDirection: 'row',
@@ -259,7 +275,7 @@ const styles = StyleSheet.create({
   },
   seccionTitulo: {
     fontSize: 18,
-    fontFamily: 'Roboto-Bold',
+    fontFamily: 'Inter-Bold',
     color: colors.text,
   },
   seccionLink: {
@@ -269,7 +285,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: radii.sm,
-    backgroundColor: '#1976d220',
+    backgroundColor: `${colors.primary}18`,
   },
 
   // Searchbar
@@ -292,14 +308,20 @@ const styles = StyleSheet.create({
   },
   metricaCard: {
     flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
-    elevation: 2,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    padding: spacing.lg + 4,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: 'rgba(15,23,42,0.08)',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 14,
+    elevation: 3,
   },
   metricaValor: {
     fontSize: 16,
-    fontFamily: 'Roboto-Bold',
+    fontFamily: 'Inter-Bold',
     color: colors.primary,
     marginBottom: 4,
     lineHeight: 20,
@@ -329,7 +351,7 @@ const styles = StyleSheet.create({
   itemStockModalCantidad: {
     fontSize: 16,
     color: '#dc3545',
-    fontFamily: 'Roboto-Bold',
+    fontFamily: 'Inter-Bold',
   },
 
   // Otras secciones de stock y listas
@@ -522,6 +544,21 @@ const ingredientStyles = StyleSheet.create({
     flex: 1,
     marginRight: 12,
   },
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    gap: 12,
+  },
+  topActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  iconButton: {
+    margin: 0,
+  },
   ingredientName: {
     fontSize: 18,
     fontWeight: '600',
@@ -531,6 +568,23 @@ const ingredientStyles = StyleSheet.create({
     fontSize: 12,
     color: '#6b7280',
     marginBottom: 6,
+  },
+  quickAdjustRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16,
+  },
+  quickAdjustButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: 'rgba(15,23,42,0.06)',
+  },
+  quickAdjustText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
   },
   ingredientUnit: {
     fontSize: 14,
@@ -562,8 +616,166 @@ const ingredientStyles = StyleSheet.create({
   cardPadding: {
     padding: 16,
   },
+  listCard: {
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#fff',
+    marginHorizontal: 2,
+  },
+  listRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  listInfo: {
+    flex: 1,
+  },
+  listName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  listMeta: {
+    fontSize: 12,
+    color: '#64748b',
+    marginTop: 2,
+  },
+  listRight: {
+    alignItems: 'flex-end',
+    gap: 6,
+  },
   separator: {
     height: 12,
+  },
+  modalInfoPreview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 12,
+    borderRadius: 14,
+    backgroundColor: 'rgba(15,23,42,0.05)',
+    marginBottom: 12,
+  },
+  modalInfoIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  modalInfoText: {
+    flex: 1,
+  },
+  modalInfoTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+  modalInfoSubtitle: {
+    fontSize: 12,
+    color: '#64748b',
+    marginTop: 2,
+  },
+  modalInfoBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  modalInfoBadgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  modalQuickRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: 10,
+    marginBottom: 8,
+  },
+  modalQuickCard: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#fff',
+  },
+  modalQuickLabel: {
+    fontSize: 11,
+    color: '#64748b',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  modalQuickValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0f172a',
+    marginTop: 4,
+  },
+  modalQuickOk: {
+    backgroundColor: 'rgba(34,197,94,0.12)',
+    borderColor: 'rgba(34,197,94,0.4)',
+  },
+  modalQuickDanger: {
+    backgroundColor: 'rgba(239,68,68,0.12)',
+    borderColor: 'rgba(239,68,68,0.4)',
+  },
+  modalSectionLabel: {
+    fontSize: 13,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    color: '#475569',
+    marginBottom: 8,
+    marginTop: 8,
+  },
+  stockPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  stockPillOk: {
+    backgroundColor: 'rgba(22,163,74,0.15)',
+  },
+  stockPillWarn: {
+    backgroundColor: 'rgba(251,191,36,0.2)',
+  },
+  stockPillDanger: {
+    backgroundColor: 'rgba(248,113,113,0.2)',
+  },
+  stockPillText: {
+    fontSize: 12,
+    fontFamily: 'Inter-SemiBold',
+    color: '#0f172a',
+  },
+  editLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: 'rgba(15,23,42,0.04)',
+  },
+  editLinkText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
   },
 });
 
@@ -659,33 +871,511 @@ const tortaStyles = StyleSheet.create({
 
 
 const homeStyles = StyleSheet.create({
-  row: {
+  heroIntro: {
+    fontSize: 15,
+    color: colors.textSubtle,
+    marginTop: spacing.xs,
+    textAlign: 'center',
+  },
+  heroHint: {
+    fontSize: 12,
+    color: colors.textMuted,
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  summaryCard: {
+    width: '100%',
+    backgroundColor: '#f4f8ff',
+    borderRadius: 28,
+    paddingVertical: spacing.lg + 6,
+    paddingHorizontal: spacing.lg,
+    shadowColor: 'rgba(15,23,42,0.15)',
+    shadowOffset: { width: 0, height: 18 },
+    shadowOpacity: 0.22,
+    shadowRadius: 30,
+    elevation: 8,
+    borderWidth: 0,
+    gap: spacing.md,
+    marginBottom: spacing.md,
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: '#0f172a',
+  },
+  summarySubtitle: {
+    fontSize: 13,
+    color: '#0f172a',
+    alignSelf: 'flex-start',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs / 2,
+    borderRadius: radii.pill,
+    backgroundColor: 'rgba(14,165,233,0.15)',
+    fontFamily: 'Inter-SemiBold',
+  },
+  summaryValue: {
+    fontSize: 34,
+    fontFamily: 'Inter-Black',
+    color: '#0f172a',
+  },
+  summaryValueRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    justifyContent: 'flex-start',
+    gap: spacing.sm,
+    flexWrap: 'wrap',
   },
-  circle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#ccc',
-    justifyContent: 'center',
+  summaryCaptionSecondary: {
+    fontSize: 12,
+    fontFamily: 'Inter-Medium',
+    color: '#475569',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs / 2,
+    alignSelf: 'center',
+    borderRadius: radii.pill,
+    backgroundColor: 'rgba(59,130,246,0.15)',
+  },
+  summaryChipRow: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: spacing.xs,
+  },
+  summaryChip: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 8,
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    maxWidth: '100%',
+    alignSelf: 'flex-start',
   },
-  circleText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  summaryChipText: {
+    fontSize: 12,
+    fontFamily: 'Inter-SemiBold',
+  },
+  summaryMuted: {
+    fontSize: 12,
+    color: '#475569',
+  },
+  summaryMetaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+  },
+  summaryMetaPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+    backgroundColor: 'rgba(255,255,255,0.65)',
+  },
+  summaryMetaPillText: {
+    fontSize: 12,
+    color: '#0f172a',
+  },
+  heroSaleCard: {
+    width: '100%',
+    backgroundColor: '#ffffff',
+    borderRadius: 28,
+    borderWidth: 0,
+    padding: spacing.lg,
+    shadowColor: 'rgba(15,23,42,0.12)',
+    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.18,
+    shadowRadius: 28,
+    elevation: 7,
+  },
+  sectionLabel: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: colors.text,
+    marginBottom: spacing.sm,
+  },
+  sectionGroup: {
+    width: '100%',
+  },
+  quickActionsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    width: '100%',
+  },
+  boardGrid: {
+    flexDirection: 'column',
+    gap: spacing.sm,
+  },
+  boardCard: {
+    width: '100%',
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+    padding: spacing.lg,
+    gap: spacing.sm,
+  },
+  boardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  boardRowHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: spacing.sm,
+    width: '100%',
+  },
+  boardRowAction: {
+    alignSelf: 'flex-start',
+  },
+  boardTitle: {
+    fontSize: 16,
+    fontFamily: 'Inter-Bold',
+    color: colors.text,
+  },
+  boardLink: {
+    fontSize: 13,
+    color: colors.primary,
+    fontFamily: 'Inter-SemiBold',
+  },
+  boardRow: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderColor: colors.border,
+    gap: spacing.xs,
+  },
+  boardRowTitle: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: colors.text,
+  },
+  boardRowMeta: {
+    fontSize: 12,
+    color: colors.textSubtle,
+  },
+  stockChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    paddingHorizontal: spacing.xs + 2,
+    paddingVertical: 2,
+    borderRadius: 999,
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.05)',
+  },
+  stockChipText: {
+    fontSize: 11,
+    color: '#b45309',
+    fontFamily: 'Inter-Medium',
+  },
+  stockMeterTrack: {
+    width: '100%',
+    height: 6,
+    borderRadius: radii.pill,
+    backgroundColor: colors.border,
+    marginTop: spacing.xs,
+    overflow: 'hidden',
+  },
+  stockMeterFill: {
+    height: '100%',
+    borderRadius: radii.pill,
+    backgroundColor: '#f97316',
+  },
+  boardEmpty: {
+    fontSize: 13,
+    color: colors.textSubtle,
+  },
+  sectionBlock: {
+    width: '100%',
+    marginBottom: spacing.xl,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.sm,
+  },
+  sectionHint: {
+    fontSize: 12,
+    color: colors.textSubtle,
+  },
+  actionCard: {
+    width: '48%',
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    shadowColor: 'rgba(15,23,42,0.06)',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 2,
+  },
+  actionIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: radii.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xs,
+  },
+  actionLabel: {
+    fontSize: 14,
+    fontFamily: 'Inter-SemiBold',
+    color: colors.text,
+  },
+  saleCard: {
+    width: '100%',
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: radii.lg,
+    padding: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  saleHeader: {
+    marginBottom: spacing.sm,
+  },
+  saleTitle: {
+    fontSize: 18,
+    fontFamily: 'Inter-Bold',
+    color: colors.text,
+  },
+  saleSubtitle: {
+    fontSize: 14,
+    color: colors.textSubtle,
+    marginTop: 4,
+  },
+  saleMetaRow: {
+    flexDirection: 'column',
+    marginTop: spacing.md,
+    marginBottom: spacing.md,
+    gap: spacing.xs,
+  },
+  saleMetaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+  saleMetaText: {
+    fontSize: 13,
+    color: colors.text,
+  },
+  saleButtonRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  saleButtonPrimary: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm + 4,
+    borderRadius: radii.md,
+    backgroundColor: colors.primary,
+    shadowColor: 'rgba(15,23,42,0.25)',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 4,
+    gap: spacing.xs,
+  },
+  saleButtonSecondary: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.sm,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surfaceMuted,
+    gap: spacing.xs,
+  },
+  saleButtonSecondaryText: {
+    fontSize: 14,
+    color: colors.text,
+    fontFamily: 'Inter-Medium',
+  },
+  saleButtonDisabled: {
+    opacity: 0.5,
+  },
+  saleButtonText: {
+    color: colors.white,
+    fontSize: 15,
+    fontFamily: 'Inter-SemiBold',
+  },
+  saleHint: {
+    marginTop: spacing.sm,
+    fontSize: 13,
+    color: colors.textSubtle,
+  },
+  tortaDetailCard: {
+    marginTop: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.lg,
+    padding: spacing.md,
+    backgroundColor: colors.surfaceMuted,
+  },
+  tortaDetailName: {
+    fontSize: 16,
+    fontFamily: 'Inter-Bold',
+    color: colors.text,
+  },
+  tortaDetailDesc: {
+    fontSize: 13,
+    color: colors.textSubtle,
+    marginTop: 2,
+  },
+  tortaDetailGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: spacing.md,
+  },
+  tortaDetailItem: {
+    width: '48%',
+    marginBottom: spacing.sm,
+  },
+  tortaDetailLabel: {
+    fontSize: 11,
+    color: colors.textSubtle,
+    textTransform: 'uppercase',
+    letterSpacing: 0.6,
+  },
+  tortaDetailValue: {
+    fontSize: 16,
+    fontFamily: 'Inter-SemiBold',
+    color: colors.text,
+  },
+  saleResetButton: {
+    marginTop: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  saleResetText: {
+    fontSize: 13,
+    color: colors.text,
+    textDecorationLine: 'underline',
+  },
+  stockList: {
+    gap: spacing.sm,
+  },
+  stockRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderColor: colors.border,
+  },
+  stockName: {
+    fontSize: 15,
+    fontFamily: 'Inter-SemiBold',
+    color: colors.text,
+  },
+  stockMeta: {
+    fontSize: 12,
+    color: colors.textSubtle,
+    marginTop: 2,
+  },
+  stockBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(251,191,36,0.2)',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: radii.pill,
+    gap: 4,
+  },
+  stockBadgeText: {
+    color: '#b45309',
+    fontSize: 12,
+    fontFamily: 'Inter-Medium',
+  },
+  rankRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  rankBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surfaceMuted,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
+  },
+  rankBadgeText: {
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  rankContent: {
+    flex: 1,
+  },
+  rankHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  rankChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: radii.pill,
+    backgroundColor: 'rgba(99,102,241,0.15)',
+  },
+  rankChipText: {
+    fontSize: 12,
+    color: '#312e81',
+    fontFamily: 'Inter-SemiBold',
   },
   name: {
     flex: 1,
     fontSize: 14,
-    color: '#333',
+    color: colors.text,
+    fontFamily: 'Inter-SemiBold',
   },
-  info: {
+  rankValue: {
     fontSize: 12,
-    color: '#007bff',
-    marginLeft: 8,
+    color: colors.textSubtle,
+  },
+  rankBarTrack: {
+    height: 6,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surfaceMuted,
+    overflow: 'hidden',
+  },
+  rankBarFill: {
+    height: '100%',
+    borderRadius: radii.pill,
+    backgroundColor: colors.secondary,
+  },
+  rankPercent: {
+    fontSize: 12,
+    color: colors.textSubtle,
+    marginTop: 4,
   },
 });
 

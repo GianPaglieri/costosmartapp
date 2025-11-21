@@ -1,4 +1,4 @@
-import api from '../src/services/api';
+﻿import api from '../src/services/api';
 import * as SecureStore from 'expo-secure-store';
 
 export const sendAuthenticatedRequest = async (url, config = {}) => {
@@ -38,6 +38,36 @@ export const UserController = {
     }
   },
   
+  requestPasswordReset: async (email) => {
+    try {
+      const { data } = await api.post('users/request-password-reset', { email });
+      return data;
+    } catch (error) {
+      const mensajeBackend = error.response?.data?.error || error.response?.data?.message;
+      if (mensajeBackend) {
+        throw new Error(mensajeBackend);
+      }
+      throw error;
+    }
+  },
+
+  changePassword: async ({ currentPassword, newPassword }) => {
+    try {
+      const { data } = await api.post('users/change-password', { currentPassword, newPassword });
+      return data;
+    } catch (error) {
+      const mensajeBackend =
+        error.response?.data?.errors?.[0]?.msg ||
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        error.userMessage;
+      if (mensajeBackend) {
+        throw new Error(mensajeBackend);
+      }
+      throw error;
+    }
+  },
+  
   // Devuelve el token guardado en SecureStore (null si no existe)
   getToken: async () => {
     try {
@@ -51,3 +81,5 @@ export const UserController = {
 };
 
 export default UserController;
+
+

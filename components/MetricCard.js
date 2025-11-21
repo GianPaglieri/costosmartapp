@@ -12,12 +12,31 @@ const compact = (n) => {
   try { return new Intl.NumberFormat('es-AR').format(num); } catch { return String(num); }
 };
 
-const MetricCard = ({ icon, value, label, subtitle, color, loading, currency = false, delta = null, deltaUnit = '%' }) => {
+const MetricCard = ({
+  icon,
+  value,
+  label,
+  subtitle,
+  color,
+  loading,
+  currency = false,
+  delta = null,
+  deltaUnit = '%',
+  style = null,
+  displayValue = null
+}) => {
   const theme = useTheme();
   const accent = color || theme.colors.primary;
 
+  const renderValue = () => {
+    if (displayValue !== null && displayValue !== undefined) {
+      return String(displayValue);
+    }
+    return currency ? `$ ${compact(value)}` : compact(value);
+  };
+
   return (
-    <Card mode="elevated" style={{ flex: 1 }}>
+    <Card mode="elevated" style={[{ flex: 1 }, style]}>
       <Card.Content>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
           {icon ? (
@@ -36,7 +55,7 @@ const MetricCard = ({ icon, value, label, subtitle, color, loading, currency = f
               numberOfLines={1}
               ellipsizeMode="tail"
             >
-              {currency ? `$ ${compact(value)}` : compact(value)}
+              {renderValue()}
             </Text>
           )}
         </View>

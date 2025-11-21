@@ -142,12 +142,12 @@ const MainDrawer = () => {
       <Drawer.Screen
         name="Ingredientes"
         component={IngredientScreen}
-        options={{ title: 'Ingredientes', drawerIcon: ({ color, size }) => (<Ionicons name="leaf-outline" size={size} color={color} />) }}
+        options={{ title: 'Ingredientes', drawerIcon: ({ color, size }) => (<Ionicons name="pricetags-outline" size={size} color={color} />) }}
       />
       <Drawer.Screen
         name="Tortas"
         component={TortasScreen}
-        options={{ title: 'Tortas', drawerIcon: ({ color, size }) => (<Ionicons name="ice-cream-outline" size={size} color={color} />) }}
+        options={{ title: 'Tortas', drawerIcon: ({ color, size }) => (<Ionicons name="fast-food-outline" size={size} color={color} />) }}
       />
       <Drawer.Screen
         name="Recetas"

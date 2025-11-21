@@ -316,14 +316,14 @@ export default function HomeScreen({ navigation }) {
     () => [
       {
         label: 'Nueva torta',
-        icon: 'ice-cream-outline',
+        icon: 'fast-food-outline',
         tint: 'rgba(124,58,237,0.12)',
         color: '#7c3aed',
         onPress: () => navigation.navigate('Tortas', { openAdd: true }),
       },
       {
         label: 'Nuevo ingrediente',
-        icon: 'leaf-outline',
+        icon: 'pricetags-outline',
         tint: 'rgba(34,197,94,0.15)',
         color: '#16a34a',
         onPress: () => navigation.navigate('Ingredientes', { openAdd: true }),
@@ -645,6 +645,4 @@ export default function HomeScreen({ navigation }) {
     </View>
   );
 }
-
-
 

@@ -569,6 +569,32 @@ const ingredientStyles = StyleSheet.create({
     color: '#6b7280',
     marginBottom: 6,
   },
+  unitChipsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: -4,
+    marginBottom: 8,
+    gap: 8,
+  },
+  unitChip: {
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    borderRadius: 999,
+    backgroundColor: '#fff',
+    marginBottom: 6,
+  },
+  unitChipSelected: {
+    backgroundColor: '#0f172a',
+    borderColor: '#0f172a',
+  },
+  unitChipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  unitChipSelectedText: {
+    color: '#fff',
+  },
   quickAdjustRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -596,7 +622,8 @@ const ingredientStyles = StyleSheet.create({
     color: '#555',
   },
   primaryButton: {
-    marginLeft: 8,
+    flex: 1,
+    borderRadius: 10,
   },
   labelGray: {
     color: '#6b7280',
@@ -699,6 +726,60 @@ const ingredientStyles = StyleSheet.create({
     fontWeight: '600',
     color: '#0f172a',
   },
+  modalSummarySection: {
+    marginTop: 12,
+    gap: 12,
+  },
+  modalSummaryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#fff',
+  },
+  modalSummaryIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#edeff7',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalSummaryLabel: {
+    fontSize: 12,
+    color: '#64748b',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  modalSummaryValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  modalSummaryMeta: {
+    fontSize: 12,
+    color: '#475569',
+    marginTop: 2,
+  },
+  modalSummaryBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: '#f8fafc',
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+  },
+  modalSummaryBadgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
   modalQuickRow: {
     flexDirection: 'row',
     alignItems: 'stretch',
@@ -777,9 +858,60 @@ const ingredientStyles = StyleSheet.create({
     fontWeight: '600',
     color: '#0f172a',
   },
+  actionsColumn: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: 16,
+    paddingHorizontal: 0,
+  },
+  footerActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  destructiveButton: {
+    alignSelf: 'stretch',
+    borderRadius: 10,
+  },
+  destructiveButtonContent: {
+    justifyContent: 'center',
+  },
+  outlinedButton: {
+    flex: 1,
+    borderRadius: 10,
+  },
 });
 
 const tortaStyles = StyleSheet.create({
+  topBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+    gap: 12,
+  },
+  topActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  iconButton: {
+    margin: 0,
+  },
+  addButton: {
+    borderRadius: 999,
+  },
+  screenTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+  screenSubtitle: {
+    fontSize: 12,
+    color: '#64748b',
+  },
+  searchInput: {
+    marginBottom: 12,
+  },
   dialog: {
     marginHorizontal: 16,
     borderRadius: 8,
@@ -795,14 +927,21 @@ const tortaStyles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     borderRadius: 8,
     padding: 12,
-    alignItems: 'center',
+    alignItems: 'stretch',
     marginBottom: 16,
   },
   previewImage: {
-    width: '100%',
+    width: 140,
     height: 140,
     borderRadius: 8,
     marginBottom: 8,
+  },
+  previewImageLarge: {
+    width: '100%',
+    height: 180,
+    borderRadius: 12,
+    marginBottom: 8,
+    alignSelf: 'stretch',
   },
   imageActions: {
     flexDirection: 'row',
@@ -866,6 +1005,202 @@ const tortaStyles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
     marginBottom: 6,
+  },
+  listCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#fff',
+    padding: 16,
+    marginHorizontal: 2,
+    borderLeftWidth: 4,
+  },
+  listRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 16,
+  },
+  listInfo: {
+    flex: 1,
+  },
+  listName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0f172a',
+    marginBottom: 4,
+  },
+  listMeta: {
+    fontSize: 13,
+    color: '#475569',
+    marginBottom: 8,
+  },
+  listStats: {
+    gap: 4,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  listLabel: {
+    fontSize: 12,
+    color: '#64748b',
+  },
+  listValue: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  listRight: {
+    alignItems: 'flex-end',
+    gap: 6,
+  },
+  marginPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  marginPillOk: {
+    backgroundColor: 'rgba(34,197,94,0.15)',
+  },
+  marginPillWarn: {
+    backgroundColor: 'rgba(249,115,22,0.15)',
+  },
+  marginPillDanger: {
+    backgroundColor: 'rgba(248,113,113,0.18)',
+  },
+  marginPillText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  separator: {
+    height: 12,
+  },
+  modalSectionLabel: {
+    fontSize: 13,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    color: '#475569',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  modalSummarySection: {
+    gap: 12,
+    marginBottom: 12,
+  },
+  modalSummaryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 16,
+    padding: 12,
+    backgroundColor: '#fff',
+  },
+  modalSummaryContent: {
+    flex: 1,
+  },
+  modalSummaryTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  modalSummaryMeta: {
+    fontSize: 12,
+    color: '#475569',
+  },
+  modalSummaryImage: {
+    width: 52,
+    height: 52,
+    borderRadius: 12,
+  },
+  summaryLink: {
+    alignSelf: 'flex-start',
+    marginTop: -4,
+  },
+  modalQuickRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: 10,
+  },
+  modalQuickCard: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#fff',
+  },
+  modalQuickLabel: {
+    fontSize: 12,
+    color: '#64748b',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  modalQuickValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0f172a',
+    marginTop: 4,
+  },
+  modalQuickHighlight: {
+    borderColor: 'rgba(14,165,233,0.4)',
+    backgroundColor: 'rgba(14,165,233,0.08)',
+  },
+  quickAdjustRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  quickAdjustButton: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    backgroundColor: 'rgba(15,23,42,0.06)',
+  },
+  quickAdjustNegative: {
+    backgroundColor: 'rgba(239,68,68,0.12)',
+  },
+  quickAdjustText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  modalHint: {
+    fontSize: 12,
+    color: '#64748b',
+    marginBottom: 12,
+  },
+  actionsColumn: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+    gap: 16,
+    paddingHorizontal: 0,
+  },
+  footerActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  destructiveButton: {
+    borderRadius: 10,
+  },
+  destructiveButtonContent: {
+    justifyContent: 'center',
+  },
+  outlinedButton: {
+    flex: 1,
+    borderRadius: 10,
+  },
+  primaryButton: {
+    flex: 1,
+    borderRadius: 10,
   },
 });
 

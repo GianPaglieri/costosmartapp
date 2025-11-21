@@ -13,7 +13,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { Card, Portal, Dialog, TextInput, Button, IconButton, Chip, FAB, useTheme, HelperText, Divider } from 'react-native-paper';
+import { Card, Portal, Dialog, TextInput, Button, IconButton, useTheme, HelperText, Divider } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -67,6 +67,13 @@ const formatCurrency = (value) => {
   }
 };
 
+const resolveImageUri = (value) => {
+  if (!value) return null;
+  const uri = String(value);
+  if (uri.startsWith('http') || uri.startsWith('file://')) return uri;
+  return `${API_URL}/${uri.replace(/^\/+/, '')}`;
+};
+
 const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete }) => {
   const [local, setLocal] = useState({
     ID_TORTA: null,
@@ -74,6 +81,7 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
     descripcion_torta: '',
     porcentaje_ganancia: '0',
     imagen: '',
+    removedImage: false,
   });
   const [touched, setTouched] = useState({ nombre: false, desc: false, margen: false });
   const navigation = useNavigation();
@@ -89,7 +97,8 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
           torta.porcentaje_ganancia !== undefined && torta.porcentaje_ganancia !== null
             ? String(torta.porcentaje_ganancia)
             : '0',
-        imagen: torta.imagen ? `${API_URL}/${torta.imagen}` : '',
+        imagen: resolveImageUri(torta.imagen) || '',
+        removedImage: false,
       });
       setTouched({ nombre: false, desc: false, margen: false });
     }
@@ -110,17 +119,27 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
     }
     const res = await ImagePicker.launchImageLibraryAsync({ quality: 0.5 });
     if (!res.canceled && res.assets?.length) {
-      setLocal(prev => ({ ...prev, imagen: res.assets[0].uri }));
+      setLocal(prev => ({ ...prev, imagen: res.assets[0].uri, removedImage: false }));
     }
   }, []);
 
-  const removeImage = useCallback(() => setLocal(prev => ({ ...prev, imagen: '' })), []);
+  const removeImage = useCallback(() => setLocal(prev => ({ ...prev, imagen: '', removedImage: true })), []);
 
   const handleVerReceta = () => {
     onDismiss();
     setTimeout(() => {
       navigation.navigate('Recetas', { recetaTortaId: torta.ID_TORTA });
     }, 300);
+  };
+
+  const handleMarginAdjust = (delta) => {
+    setLocal((prev) => {
+      const current = parsePercentValue(prev.porcentaje_ganancia);
+      const base = Number.isNaN(current) ? 0 : current;
+      const next = Math.max(0, base + delta);
+      return { ...prev, porcentaje_ganancia: String(next) };
+    });
+    setTouched((prev) => ({ ...prev, margen: true }));
   };
 
   const marginValue = parsePercentValue(local.porcentaje_ganancia);
@@ -133,6 +152,12 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
   const originalMarginRaw = torta?.porcentaje_ganancia !== undefined && torta?.porcentaje_ganancia !== null ? String(torta.porcentaje_ganancia) : '0';
   const userEditedMargin = String(local.porcentaje_ganancia) !== originalMarginRaw;
   const previewPrecio = !marginError && costoTotal !== null && userEditedMargin ? costoTotal * (1 + marginValue / 100) : null;
+  const hasLocalImage = Boolean(local.imagen);
+  const resolvedImage = hasLocalImage
+    ? resolveImageUri(local.imagen)
+    : local.removedImage
+      ? null
+      : resolveImageUri(torta?.imagen);
 
   return (
     <Portal>
@@ -152,6 +177,70 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
             <View style={{ maxHeight: Math.min(screenHeight * 0.7, 520) }}>
               <ScrollView contentContainerStyle={{ paddingBottom: 8 }} showsVerticalScrollIndicator={false}>
+                <View style={tStyles.modalSummarySection}>
+                  <Text style={tStyles.modalSectionLabel}>Resumen</Text>
+                  <View style={tStyles.modalSummaryCard}>
+                    <View style={tStyles.modalSummaryContent}>
+                      <Text style={tStyles.modalSummaryTitle}>{local.nombre_torta || 'Torta sin nombre'}</Text>
+                      <Text style={tStyles.modalSummaryMeta}>ID {local.ID_TORTA ?? '--'}</Text>
+                      <Text style={tStyles.modalSummaryMeta}>Margen actual: {local.porcentaje_ganancia || '0'}%</Text>
+                    </View>
+                    {resolvedImage ? (
+                      <Image source={{ uri: resolvedImage }} style={tStyles.modalSummaryImage} />
+                    ) : null}
+                  </View>
+                  <View style={tStyles.modalQuickRow}>
+                    <View style={tStyles.modalQuickCard}>
+                      <Text style={tStyles.modalQuickLabel}>Costo total</Text>
+                      <Text style={tStyles.modalQuickValue}>
+                        {costoTotal !== null ? formatCurrency(costoTotal) : '--'}
+                      </Text>
+                    </View>
+                    <View style={tStyles.modalQuickCard}>
+                      <Text style={tStyles.modalQuickLabel}>Precio lista</Text>
+                      <Text style={tStyles.modalQuickValue}>
+                        {precioActual !== null ? formatCurrency(precioActual) : '--'}
+                      </Text>
+                    </View>
+                  </View>
+                  {previewPrecio !== null ? (
+                    <View style={[tStyles.modalQuickCard, tStyles.modalQuickHighlight]}>
+                      <Text style={tStyles.modalQuickLabel}>Nuevo precio estimado</Text>
+                      <Text style={tStyles.modalQuickValue}>{formatCurrency(previewPrecio)}</Text>
+                    </View>
+                  ) : null}
+                  <Button
+                    mode="text"
+                    icon="book-open-variant"
+                    textColor="#0f172a"
+                    onPress={handleVerReceta}
+                    style={tStyles.summaryLink}
+                  >
+                    Ver receta vinculada
+                  </Button>
+                </View>
+
+                <Text style={tStyles.modalSectionLabel}>Actualizaciones rapidas</Text>
+                <View style={tStyles.quickAdjustRow}>
+                  {[5, 10].map((value) => (
+                    <Pressable
+                      key={`inc-${value}`}
+                      onPress={() => handleMarginAdjust(value)}
+                      style={tStyles.quickAdjustButton}
+                    >
+                      <Text style={tStyles.quickAdjustText}>+{value}%</Text>
+                    </Pressable>
+                  ))}
+                  <Pressable
+                    key="dec-5"
+                    onPress={() => handleMarginAdjust(-5)}
+                    style={[tStyles.quickAdjustButton, tStyles.quickAdjustNegative]}
+                  >
+                    <Text style={[tStyles.quickAdjustText, { color: '#b91c1c' }]}>-5%</Text>
+                  </Pressable>
+                </View>
+
+                <Text style={tStyles.modalSectionLabel}>Datos básicos</Text>
                 <FieldLabel>Nombre</FieldLabel>
                 <TextInput
                   mode="outlined"
@@ -181,6 +270,7 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
                   <HelperText type="error">La descripcion es obligatoria</HelperText>
                 ) : null}
 
+                <Text style={tStyles.modalSectionLabel}>Margen y precios</Text>
                 <FieldLabel>Porcentaje de ganancia (%)</FieldLabel>
                 <TextInput
                   mode="outlined"
@@ -194,42 +284,21 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
                 />
                 {touched?.margen && marginError ? (
                   <HelperText type="error">Ingresa un porcentaje valido</HelperText>
-                ) : null}
-
-                {costoTotal !== null ? (
-                  <View style={{ backgroundColor: '#f1f5f9', padding: 12, borderRadius: 8, marginBottom: 12 }}>
-                    <Text style={{ fontSize: 12, color: '#64748b', marginBottom: 6 }}>Resumen de precios</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <Text style={{ color: '#475569' }}>Costo total</Text>
-                      <Text style={{ fontWeight: '600' }}>{formatCurrency(costoTotal)}</Text>
-                    </View>
-                    {precioActual !== null ? (
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                        <Text style={{ color: '#475569' }}>Precio lista actual</Text>
-                        <Text style={{ fontWeight: '600' }}>{formatCurrency(precioActual)}</Text>
-                      </View>
-                    ) : null}
-                    {previewPrecio !== null ? (
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Text style={{ color: '#475569' }}>Nuevo precio (previo)</Text>
-                        <Text style={{ fontWeight: '700' }}>{formatCurrency(previewPrecio)}</Text>
-                      </View>
-                    ) : null}
-                  </View>
                 ) : (
-                  <Text style={{ color: '#64748b', fontSize: 12, marginBottom: 12 }}>
-                    El precio se calculara automaticamente cuando la receta tenga ingredientes.
+                  <Text style={tStyles.modalHint}>
+                    El precio final se recalcula automaticamente con el margen indicado.
                   </Text>
                 )}
 
-                <Divider style={{ marginVertical: 8 }} />
-                <FieldLabel>Imagen</FieldLabel>
+                <Divider style={{ marginVertical: 12 }} />
+                <Text style={tStyles.modalSectionLabel}>Imagen</Text>
                 <View style={tStyles.imageContainer}>
-                  {local.imagen ? (
+                  {resolvedImage ? (
                     <View style={{ alignItems: 'center' }}>
                       <Image
-                        source={{ uri: local.imagen }}
-                        style={[tStyles.previewImage, { maxHeight: 160, borderRadius: 8 }]}
+                        source={{ uri: resolvedImage }}
+                        style={tStyles.previewImageLarge}
+                        resizeMode="cover"
                       />
                       <Button mode="text" textColor="#dc3545" onPress={removeImage}>
                         Quitar imagen
@@ -247,27 +316,25 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
           </KeyboardAvoidingView>
         </Dialog.Content>
 
-        <Dialog.Actions style={[tStyles.modalActionsBetween, tStyles.actionsAlign]}>
+        <Dialog.Actions style={tStyles.actionsColumn}>
           <Button
             mode="text"
             icon="trash-can-outline"
-            textColor="#dc3545"
-            compact
+            textColor="#dc2626"
             onPress={() => onDelete(local.ID_TORTA)}
+            contentStyle={tStyles.destructiveButtonContent}
+            style={tStyles.destructiveButton}
           >
-            Eliminar
+            Eliminar torta
           </Button>
-          <View style={tStyles.actionsRight}>
+          <View style={tStyles.footerActions}>
             <Button
               mode="outlined"
-              icon="book-open-variant"
-              onPress={handleVerReceta}
-              style={tStyles.viewRecipeButton}
-              textColor="#495057"
-              compact
-              contentStyle={tStyles.buttonContent}
+              onPress={onDismiss}
+              textColor="#0f172a"
+              style={tStyles.outlinedButton}
             >
-              Ver receta
+              Cancelar
             </Button>
             <Button
               mode="contained"
@@ -288,7 +355,6 @@ const EditTortaModal = React.memo(({ visible, onDismiss, torta, onSave, onDelete
               }}
               style={tStyles.primaryButton}
               buttonColor={PRIMARY_BLUE}
-              compact
               contentStyle={tStyles.buttonContent}
               disabled={!canSave}
             >
@@ -307,6 +373,7 @@ const AddTortaModal = React.memo(({ visible, onDismiss, onSave }) => {
   const [local, setLocal] = useState({ nombre_torta: '', descripcion_torta: '', porcentaje_ganancia: '0', imagen: '' });
   const [touched, setTouched] = useState({ nombre: false, desc: false, margen: false });
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const resolvedImage = resolveImageUri(local.imagen);
 
   useEffect(() => {
     if (visible) {
@@ -407,9 +474,9 @@ const AddTortaModal = React.memo(({ visible, onDismiss, onSave }) => {
               <Divider style={{ marginVertical: 8 }} />
               <FieldLabel>Imagen</FieldLabel>
               <View style={tStyles.imageContainer}>
-                {local.imagen ? (
+                {resolvedImage ? (
                   <View style={{ alignItems: 'center' }}>
-                    <Image source={{ uri: local.imagen }} style={[tStyles.previewImage, { maxHeight: 160, borderRadius: 8 }]} />
+                    <Image source={{ uri: resolvedImage }} style={tStyles.previewImageLarge} resizeMode="cover" />
                     <Button mode="text" textColor="#dc3545" onPress={removeImage}>
                       Quitar imagen
                     </Button>
@@ -582,22 +649,39 @@ export default function TortaScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
-        <Text style={{ fontSize: 20, fontWeight: '700', color: '#111', flex: 1 }}>Tortas</Text>
-        <Chip mode="outlined" style={{ marginRight: 4 }}>{tortas.length} total</Chip>
-        <IconButton icon="plus" onPress={() => { setCurrent({ ID_TORTA: null, nombre_torta: '', descripcion_torta: '', imagen: '' }); setAddVisible(true); }} accessibilityLabel="Agregar torta" />
-        <IconButton
-          icon={searchOpen ? 'close' : 'magnify'}
-          onPress={() => {
-            if (searchOpen) {
-              setSearchRaw('');
-              setSearchOpen(false);
-            } else {
-              setSearchOpen(true);
-            }
-          }}
-          accessibilityLabel="Buscar"
-        />
+      <View style={tStyles.topBar}>
+        <View style={{ flex: 1 }}>
+          <Text style={tStyles.screenTitle}>Tortas</Text>
+          <Text style={tStyles.screenSubtitle}>{tortas.length} registradas</Text>
+        </View>
+        <View style={tStyles.topActions}>
+          <IconButton
+            icon={searchOpen ? 'close' : 'magnify'}
+            size={20}
+            style={tStyles.iconButton}
+            onPress={() => {
+              if (searchOpen) {
+                setSearchRaw('');
+                setSearchOpen(false);
+              } else {
+                setSearchOpen(true);
+              }
+            }}
+            accessibilityLabel="Buscar"
+          />
+          <Button
+            icon="plus"
+            mode="contained"
+            onPress={() => {
+              setCurrent({ ID_TORTA: null, nombre_torta: '', descripcion_torta: '', imagen: '' });
+              setAddVisible(true);
+            }}
+            contentStyle={{ flexDirection: 'row-reverse' }}
+            style={tStyles.addButton}
+          >
+            Nueva
+          </Button>
+        </View>
       </View>
       {searchOpen && (
         <TextInput
@@ -607,7 +691,7 @@ export default function TortaScreen() {
           mode="outlined"
           left={<TextInput.Icon name="magnify" />}
           right={searchRaw ? <TextInput.Icon name="close" onPress={() => { setSearchRaw(''); }} /> : null}
-          style={[tStyles.mb12]}
+          style={tStyles.searchInput}
         />
       )}
       {filtered.length === 0 ? (
@@ -620,32 +704,68 @@ export default function TortaScreen() {
           data={filtered}
           keyExtractor={item => item.ID_TORTA.toString()}
           contentContainerStyle={{ paddingBottom: 24 }}
+          ItemSeparatorComponent={() => <View style={tStyles.separator} />}
           renderItem={({ item }) => {
             const costo = parseFloat(String(item.costo_total ?? item.precio ?? 0)) || 0;
             const precioLista = parseFloat(String(item.precio_lista ?? item.precio ?? item.costo_total ?? 0)) || costo;
             const margenValor = parsePercentValue(item.porcentaje_ganancia);
             const margenDisplay = Number.isNaN(margenValor) ? 0 : margenValor;
+            const diff = precioLista - costo;
+            const severity = margenDisplay >= 30 ? 'ok' : margenDisplay >= 15 ? 'warn' : 'danger';
+            const borderColor =
+              severity === 'ok' ? '#22c55e' : severity === 'warn' ? '#f59e0b' : '#ef4444';
 
             return (
-              <Card style={[styles.card, tStyles.cardMargin]}>
-                <Card.Content>
-                  <View style={tStyles.cardRow}>
-                    <View style={tStyles.flex1}>
-                      <Text style={styles.cardTitle}>{item.nombre_torta}</Text>
-                      {item.descripcion_torta ? (
-                        <Text style={styles.cardText}>{item.descripcion_torta}</Text>
-                      ) : null}
-                      <View style={{ marginTop: 8 }}>
-                        <Text style={{ color: '#475569', fontSize: 13 }}>Margen: {margenDisplay}%</Text>
-                        <Text style={{ color: '#475569', fontSize: 13, marginTop: 2 }}>Costo: {formatCurrency(costo)}</Text>
-                        <Text style={{ color: '#1f2937', fontSize: 14, fontWeight: '600', marginTop: 2 }}>Precio lista: {formatCurrency(precioLista)}</Text>
-                      </View>
-                    </View>
-                    <Pressable onPress={() => { setCurrent(item); setEditVisible(true); }}>
-                      <Text style={styles.seccionLink}>Editar</Text>
-                    </Pressable>
+              <Card style={[tStyles.listCard, { borderLeftColor: borderColor }]}>
+                <View style={tStyles.listRow}>
+                  <View style={tStyles.listInfo}>
+                    <Text style={tStyles.listName}>{item.nombre_torta}</Text>
+                    <Text style={tStyles.listMeta}>
+                      {formatCurrency(costo)} costo • {formatCurrency(precioLista)} lista
+                    </Text>
                   </View>
-                </Card.Content>
+                  <View style={tStyles.listRight}>
+                    <View
+                      style={[
+                        tStyles.marginPill,
+                        severity === 'ok'
+                          ? tStyles.marginPillOk
+                          : severity === 'warn'
+                            ? tStyles.marginPillWarn
+                            : tStyles.marginPillDanger,
+                      ]}
+                    >
+                      <Ionicons
+                        name={
+                          severity === 'ok'
+                            ? 'trending-up-outline'
+                            : severity === 'warn'
+                              ? 'remove-outline'
+                              : 'warning-outline'
+                        }
+                        size={13}
+                        color={
+                          severity === 'ok'
+                            ? '#166534'
+                            : severity === 'warn'
+                              ? '#92400e'
+                              : '#b91c1c'
+                        }
+                      />
+                      <Text style={tStyles.marginPillText}>{margenDisplay}%</Text>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setCurrent(item);
+                        setEditVisible(true);
+                      }}
+                      style={tStyles.editLink}
+                    >
+                      <Ionicons name="create-outline" size={14} color="#0f172a" />
+                      <Text style={tStyles.editLinkText}>Editar</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </Card>
             );
           }}

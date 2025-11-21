@@ -42,7 +42,6 @@ const units = ['g', 'kg', 'ml', 'l', 'u'];
 const PRIMARY_BLUE = '#007bff';
 
 const IngredientForm = ({ local, setLocal, touched, setTouched }) => {
-  const theme = useTheme();
   const handleQuickAdjust = (delta) => {
     setLocal((prev) => {
       const next = Math.max(0, (Number(prev.CantidadStock) || 0) + delta);
@@ -121,17 +120,30 @@ const IngredientForm = ({ local, setLocal, touched, setTouched }) => {
       ) : null}
 
       <Text style={ingStyles.fieldLabel}>Unidad</Text>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: -4, marginBottom: 8 }}>
-        {units.map((u) => (
-          <Chip
-            key={u}
-            selected={(local.unidad_Medida || '').toLowerCase() === u}
-            onPress={() => setLocal((p) => ({ ...p, unidad_Medida: u }))}
-            style={{ marginRight: 6, marginBottom: 6 }}
-          >
-            {u}
-          </Chip>
-        ))}
+      <View style={ingStyles.unitChipsRow}>
+        {units.map((u) => {
+          const selected = (local.unidad_Medida || '').toLowerCase() === u;
+          return (
+            <Chip
+              key={u}
+              mode="outlined"
+              icon={selected ? 'check' : undefined}
+              selected={selected}
+              selectedColor="#fff"
+              onPress={() => setLocal((p) => ({ ...p, unidad_Medida: u }))}
+              style={[
+                ingStyles.unitChip,
+                selected ? ingStyles.unitChipSelected : null,
+              ]}
+              textStyle={[
+                ingStyles.unitChipText,
+                selected ? ingStyles.unitChipSelectedText : null,
+              ]}
+            >
+              {u}
+            </Chip>
+          );
+        })}
       </View>
       {touched.unidad && !local.unidad_Medida.trim() ? (
         <HelperText type="error">La unidad es obligatoria</HelperText>
@@ -170,7 +182,6 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
     CantidadStock: '',
   });
   const [touched, setTouched] = useState({ nombre: false, unidad: false, tamano: false, costo: false, stock: false });
-  const theme = useTheme();
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   useEffect(() => {
@@ -209,59 +220,63 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
             <View style={{ maxHeight: Math.min(screenHeight * 0.7, 520) }}>
               <ScrollView contentContainerStyle={{ paddingBottom: 8 }} showsVerticalScrollIndicator={false}>
-                <View style={ingStyles.modalInfoPreview}>
-                  <View style={ingStyles.modalInfoIcon}>
-                    <Ionicons name="leaf-outline" size={18} color="#0f172a" />
+                <View style={ingStyles.modalSummarySection}>
+                  <Text style={ingStyles.modalSectionLabel}>Resumen actual</Text>
+                  <View style={ingStyles.modalSummaryCard}>
+                    <View style={ingStyles.modalSummaryIcon}>
+                    <Ionicons name="pricetags-outline" size={18} color="#0f172a" />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={ingStyles.modalSummaryLabel}>Ingrediente</Text>
+                      <Text style={ingStyles.modalSummaryValue}>{local.nombre || 'Sin nombre'}</Text>
+                      <Text style={ingStyles.modalSummaryMeta}>Unidad base: {local.unidad_Medida || 'N/A'}</Text>
+                    </View>
+                    <View style={ingStyles.modalSummaryBadge}>
+                      <Ionicons name="pricetag-outline" size={12} color="#0f172a" />
+                      <Text style={ingStyles.modalSummaryBadgeText}>ID {local.id ?? '--'}</Text>
+                    </View>
                   </View>
-                  <View style={ingStyles.modalInfoText}>
-                    <Text style={ingStyles.modalInfoTitle}>{local.nombre || 'Ingrediente'}</Text>
-                    <Text style={ingStyles.modalInfoSubtitle}>
-                      Unidad base: {local.unidad_Medida || 'N/A'}
-                    </Text>
-                  </View>
-                  <View style={ingStyles.modalInfoBadge}>
-                    <Ionicons name="pricetag-outline" size={12} color="#0f172a" />
-                    <Text style={ingStyles.modalInfoBadgeText}>ID {local.id ?? '—'}</Text>
-                  </View>
-                </View>
-                <View style={ingStyles.modalQuickRow}>
-                  <View style={ingStyles.modalQuickCard}>
-                    <Text style={ingStyles.modalQuickLabel}>Costo unitario</Text>
-                    <Text style={ingStyles.modalQuickValue}>${local.costo || '0'}</Text>
-                  </View>
-                  <View
-                    style={[
-                      ingStyles.modalQuickCard,
-                      Number(local.CantidadStock || 0) <= 0 ? ingStyles.modalQuickDanger : ingStyles.modalQuickOk,
-                    ]}
-                  >
-                    <Text style={ingStyles.modalQuickLabel}>Stock disponible</Text>
-                    <Text style={ingStyles.modalQuickValue}>
-                      {local.CantidadStock || '0'} {local.unidad_Medida || 'u'}
-                    </Text>
+                  <View style={ingStyles.modalQuickRow}>
+                    <View style={ingStyles.modalQuickCard}>
+                      <Text style={ingStyles.modalQuickLabel}>Costo unitario</Text>
+                      <Text style={ingStyles.modalQuickValue}>${local.costo || '0'}</Text>
+                    </View>
+                    <View
+                      style={[
+                        ingStyles.modalQuickCard,
+                        Number(local.CantidadStock || 0) <= 0 ? ingStyles.modalQuickDanger : ingStyles.modalQuickOk,
+                      ]}
+                    >
+                      <Text style={ingStyles.modalQuickLabel}>Stock disponible</Text>
+                      <Text style={ingStyles.modalQuickValue}>
+                        {local.CantidadStock || '0'} {local.unidad_Medida || 'u'}
+                      </Text>
+                    </View>
                   </View>
                 </View>
                 <IngredientForm local={local} setLocal={setLocal} touched={touched} setTouched={setTouched} />
               </ScrollView>
+
             </View>
           </KeyboardAvoidingView>
         </Dialog.Content>
-        <Dialog.Actions style={[ingStyles.modalActionsBetween, ingStyles.actionsAlign]}>
+        <Dialog.Actions style={ingStyles.actionsColumn}>
           <Button
             mode="text"
             icon="trash-can-outline"
-            textColor="#dc3545"
-            compact
+            textColor="#dc2626"
             onPress={() => onDelete(local.id)}
+            contentStyle={ingStyles.destructiveButtonContent}
+            style={ingStyles.destructiveButton}
           >
-            Eliminar
+            Eliminar ingrediente
           </Button>
-          <View style={ingStyles.actionsRight}>
+          <View style={ingStyles.footerActions}>
             <Button
-              mode="text"
+              mode="outlined"
               onPress={onDismiss}
-              labelStyle={ingStyles.labelGray}
-              compact
+              textColor="#0f172a"
+              style={ingStyles.outlinedButton}
             >
               Cancelar
             </Button>
@@ -285,13 +300,13 @@ const EditIngredienteModal = React.memo(({ visible, onDismiss, ingrediente, onSa
               }}
               style={ingStyles.primaryButton}
               buttonColor={PRIMARY_BLUE}
-              compact
               contentStyle={ingStyles.buttonContent}
             >
               Guardar
             </Button>
           </View>
         </Dialog.Actions>
+
       </Dialog>
     </Portal>
   );
@@ -301,7 +316,6 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave, initialNam
   const [local, setLocal] = useState({ nombre: '', unidad_Medida: '', tamano_Paquete: '', costo: '', CantidadStock: '' });
   const [touched, setTouched] = useState({ nombre: false, unidad: false, tamano: false, costo: false, stock: false });
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-  const theme = useTheme();
 
   useEffect(() => {
     if (visible) {
@@ -337,13 +351,13 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave, initialNam
             </View>
           </KeyboardAvoidingView>
         </Dialog.Content>
-        <Dialog.Actions style={[ingStyles.modalActionsBetween, ingStyles.actionsAlign]}>
-          <View style={ingStyles.actionsRight}>
+        <Dialog.Actions style={ingStyles.actionsColumn}>
+          <View style={ingStyles.footerActions}>
             <Button
-              mode="text"
+              mode="outlined"
               onPress={onDismiss}
-              labelStyle={ingStyles.labelGray}
-              compact
+              textColor="#0f172a"
+              style={ingStyles.outlinedButton}
             >
               Cancelar
             </Button>
@@ -366,7 +380,6 @@ const AddIngredienteModal = React.memo(({ visible, onDismiss, onSave, initialNam
               }}
               style={ingStyles.primaryButton}
               buttonColor={PRIMARY_BLUE}
-              compact
               contentStyle={ingStyles.buttonContent}
             >
               Guardar
@@ -616,9 +629,4 @@ export default function IngredientScreen() {
     </View>
   );
 }
-
-
-
-
-
 
